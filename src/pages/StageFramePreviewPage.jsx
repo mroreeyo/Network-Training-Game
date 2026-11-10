@@ -1,12 +1,17 @@
+// [라이브러리] react: 붙인 카드와 고른 카드 상태(useState)를 만든다 (자세한 이유는 main.jsx)
+import { useState } from 'react';
 import Button from '../components/common/Button.jsx';
-import Card from '../components/common/Card.jsx';
+import DragDropArea from '../components/common/DragDropArea.jsx';
+import DraggableCard from '../components/common/DraggableCard.jsx';
+import DropZone from '../components/common/DropZone.jsx';
+import HeaderLabel from '../components/common/HeaderLabel.jsx';
 import PartsTray from '../components/common/PartsTray.jsx';
 import Workbench from '../components/common/Workbench.jsx';
 import { chapters } from '../data/chapters.js';
 import { StageSession } from './StagePage.jsx';
 
 // 스테이지 틀(작업 지시서, 힌트, 작업대, 부품 트레이, 결과 화면)을 확인하는 임시 화면이다.
-// 진짜 게임판이 아직 없어서, 버튼으로 통과·반송 결과를 내는 점검용 게임판을 끼워 넣었다.
+// 진짜 게임판이 아직 없어서, 카드를 붙여 보고 버튼으로 통과·반송 결과를 내는 점검용 게임판을 끼워 넣었다.
 // 챕터 1 게임판을 만들면 이 파일과 주소(/preview/stage-frame)를 지운다.
 const sampleStage = {
   number: 2,
@@ -49,29 +54,70 @@ const returnResult = {
   },
 };
 
-// 모든 게임판과 같은 props(stage, onFinish)를 받는다.
-function PreviewBoard({ onFinish }) {
+const sampleCards = [
+  { id: 'tcp', layer: 'L4', name: 'TCP 헤더', rows: [['목적지 포트', '443']] },
+  { id: 'ip', layer: 'L3', name: 'IP 헤더', rows: [['출발지 IP', '192.168.0.10'], ['목적지 IP', '10.0.0.20']] },
+  { id: 'eth', layer: 'L2', name: '이더넷 헤더', rows: [['출발지 MAC', 'AA:AA:AA:00:00:0A'], ['목적지 MAC', '11:11:11:00:00:01']] },
+];
+const SAMPLE_ZONE = 'sample-zone';
+
+// 붙인 라벨 목록과 카드를 놓을 자리. 고른 카드가 있으면 자리가 테이프색으로 바뀐다.
+function SampleBox({ attached, selectedId, onPlace }) {
+  const zoneHint = selectedId ? '고른 카드를 여기에 붙여요.' : '부품 트레이에서 카드를 먼저 골라요.';
   return (
     <>
+      <ul className="text-body">
+        {attached.map((card) => (
+          <li key={card.id}>
+            <HeaderLabel layer={card.layer} name={card.name} rows={card.rows} />
+          </li>
+        ))}
+      </ul>
+      <DropZone id={SAMPLE_ZONE} name="다음 헤더 자리" hint={zoneHint} ready={selectedId !== null} onActivate={() => onPlace(selectedId, SAMPLE_ZONE)} />
+    </>
+  );
+}
+
+function SampleTray({ cards, selectedId, onSelect }) {
+  return (
+    <PartsTray title={`부품 트레이: 헤더 카드 ${cards.length}장`}>
+      {cards.map((card) => (
+        <li key={card.id}>
+          <DraggableCard id={card.id} layer={card.layer} name={card.name} rows={card.rows} selected={selectedId === card.id} onSelect={onSelect} />
+        </li>
+      ))}
+    </PartsTray>
+  );
+}
+
+// 모든 게임판과 같은 props(stage, onFinish)를 받는다.
+function PreviewBoard({ onFinish }) {
+  const [attachedIds, setAttachedIds] = useState([]);
+  const [selectedId, setSelectedId] = useState(null);
+  const attached = attachedIds.map((id) => sampleCards.find((card) => card.id === id));
+  const trayCards = sampleCards.filter((card) => !attachedIds.includes(card.id));
+
+  // 드래그로 놓든 카드와 자리를 차례로 누르든 이 함수 하나를 부른다.
+  function placeCard(cardId, zoneId) {
+    const inTray = trayCards.some((card) => card.id === cardId);
+    if (zoneId !== SAMPLE_ZONE || !inTray) {
+      return;
+    }
+    setAttachedIds([...attachedIds, cardId]);
+    setSelectedId(null);
+  }
+
+  return (
+    <DragDropArea onDropCard={placeCard}>
       <Workbench>
-        <p className="text-body">여기에 챕터별 게임판이 들어가요. 아래 버튼으로 결과 화면을 확인해요.</p>
+        <SampleBox attached={attached} selectedId={selectedId} onPlace={placeCard} />
         <Button variant="primary" onClick={() => onFinish(passResult)}>
           통과 결과 보기
         </Button>
         <Button onClick={() => onFinish(returnResult)}>반송 결과 보기</Button>
       </Workbench>
-      <PartsTray title="부품 트레이: 카드 3장">
-        <li>
-          <Card>카드 1</Card>
-        </li>
-        <li>
-          <Card>카드 2</Card>
-        </li>
-        <li>
-          <Card>카드 3</Card>
-        </li>
-      </PartsTray>
-    </>
+      <SampleTray cards={trayCards} selectedId={selectedId} onSelect={setSelectedId} />
+    </DragDropArea>
   );
 }
 
