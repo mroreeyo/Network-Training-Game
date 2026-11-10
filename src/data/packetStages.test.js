@@ -19,13 +19,17 @@ function listCardChoices(step) {
   return choices;
 }
 
-const allSteps = packetStages.flatMap((stage) => {
+// 받는 쪽 스테이지(arrived)에는 배송이 없어서 보내는 쪽 스테이지만 모은다.
+const sendingStages = packetStages.filter((stage) => stage.deliveries !== undefined);
+const receivingStages = packetStages.filter((stage) => stage.arrived !== undefined);
+
+const allSteps = sendingStages.flatMap((stage) => {
   return stage.deliveries.flatMap((delivery) => {
     return delivery.steps.map((step) => ({ stage, delivery, step }));
   });
 });
 
-const allDeliveries = packetStages.flatMap((stage) => {
+const allDeliveries = sendingStages.flatMap((stage) => {
   return stage.deliveries.map((delivery) => ({ stage, delivery }));
 });
 
@@ -78,8 +82,19 @@ describe('packetStages 데이터', () => {
       expect(passing.length, `스테이지 ${stage.number}: ${step.prompt}`).toBe(1);
     });
   });
-  it('작업 지시서에 써야 할 포트 번호가 적혀 있다', () => {
+  it('스테이지마다 보낼 배송이나 받은 상자 중 하나만 있다', () => {
     packetStages.forEach((stage) => {
+      expect(stage.deliveries === undefined, `스테이지 ${stage.number}`).not.toBe(stage.arrived === undefined);
+    });
+  });
+  it('받은 상자에는 L2, L3, L4 헤더가 한 장씩 붙어 있다', () => {
+    receivingStages.forEach((stage) => {
+      const layers = stage.arrived.labels.map((card) => card.layer).sort();
+      expect(layers, `스테이지 ${stage.number}`).toEqual(['L2', 'L3', 'L4']);
+    });
+  });
+  it('작업 지시서에 써야 할 포트 번호가 적혀 있다', () => {
+    sendingStages.forEach((stage) => {
       stage.deliveries.forEach((delivery) => {
         expect(stage.goal).toContain(String(delivery.transport.destinationPort));
       });

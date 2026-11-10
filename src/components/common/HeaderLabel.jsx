@@ -4,7 +4,9 @@ import styles from './HeaderLabel.module.css';
 // as="button"이면 누를 수 있는 라벨이 되고, 기본(div)은 상자에 붙은 라벨을 보여 주기만 한다.
 // {...rest}를 먼저 펼치는 이유: dnd-kit이 넘기는 aria-pressed(undefined)가 선택 상태를 지우지 않게 하려는 것이다.
 // compact는 좁은 화면에서 카드 이름을 숨긴다 (부품 트레이 제목이 계층을 알려 주기 때문이다).
-function HeaderLabel({ as: Tag = 'div', layer, name, rows, selected = false, compact = false, className = '', ...rest }) {
+// selected를 주지 않은 버튼(예: 받는 쪽에서 벗기는 라벨)은 고르는 버튼이 아니라서 aria-pressed를 달지 않는다.
+// 기본값을 false로 두면 화면 낭독기가 "전환 버튼, 눌리지 않음"으로 읽는다.
+function HeaderLabel({ as: Tag = 'div', layer, name, rows, selected, compact = false, className = '', ...rest }) {
   const selectedClass = selected ? styles.selected : '';
   const compactClass = compact ? styles.compact : '';
   const isButton = Tag === 'button';
