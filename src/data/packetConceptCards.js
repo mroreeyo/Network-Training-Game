@@ -44,4 +44,15 @@ export const packetConceptCards = [
       '구간이 3개면 L2 헤더도 3번 만들어져요.',
     ],
   },
+  {
+    id: 'packet-5',
+    chapterId: 'packet',
+    stageNumber: 5,
+    title: '역캡슐화',
+    lines: [
+      '받는 쪽은 바깥 헤더부터 L2, L3, L4 순서로 벗겨요. 이것을 역캡슐화라고 해요.',
+      'L2에서는 목적지 MAC이 내 것인지, L3에서는 목적지 IP가 내 것인지 확인해요.',
+      'L4의 포트 번호로 데이터를 받을 프로그램을 정하고, 마지막에 원래 데이터가 나와요.',
+    ],
+  },
 ];

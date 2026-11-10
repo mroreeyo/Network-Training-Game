@@ -6,6 +6,7 @@
 //   title, goal: 작업 지시서에 보이는 제목과 목표. 목표에는 써야 할 포트 번호를 적는다.
 //   hints: 힌트 최대 2단계.
 //   deliveries: 차례로 보낼 배송 목록. 대부분 1건이다.
+//   arrived: 받는 쪽 스테이지에만 있다. 도착한 상자 { destinationName, payload, labels } (deliveries 대신 쓴다).
 //   successSummary: 통과했을 때 결과 화면에 보이는 문장.
 //
 // 배송(delivery) 모양은 src/rules/packetRules.js 맨 위에 적혀 있다. 화면용으로 아래 값이 더 있다.
@@ -244,6 +245,19 @@ const twoRouterDelivery = {
   ],
 };
 
+// ---------- 스테이지 5: 받는 쪽 (역캡슐화) ----------
+// 스테이지 2에서 서버 B로 보낸 상자가 도착한 모습이다. 마지막 구간의 L2 헤더가 붙어 있다.
+// 목록은 붙인 순서(L4가 맨 안쪽)로 적는다. 화면은 바깥(L2)이 위에 보이게 뒤집어 쌓는다.
+const arrivedAtServerB = {
+  destinationName: '서버 B',
+  payload: '파일 조각',
+  labels: [
+    makeTransportCard('arrived-l4', 'TCP', 443),
+    makeIpCard('arrived-l3', '192.168.0.10', '10.0.0.20'),
+    makeEthernetCard('arrived-l2', '11:11:11:00:00:02', 'BB:BB:BB:00:00:0B'),
+  ],
+};
+
 export const packetStages = [
   {
     number: 1,
@@ -288,5 +302,16 @@ export const packetStages = [
     ],
     deliveries: [twoRouterDelivery],
     successSummary: '배송 완료. 라우터를 두 번 지나며 L2 헤더를 새로 붙였고, IP 헤더는 끝까지 그대로였어요.',
+  },
+  {
+    number: 5,
+    title: '도착한 패킷에서 원래 데이터 꺼내기',
+    goal: '서버 B에 도착한 상자에서 헤더를 벗겨 원래 데이터를 꺼내요. 받는 쪽은 보내는 쪽과 반대 순서로 벗겨요.',
+    hints: [
+      '받는 쪽에서는 가장 바깥에 붙은 헤더부터 벗겨요. 보낼 때 가장 나중에 붙인 헤더예요.',
+      '가장 바깥은 L2예요. L2, L3, L4 순서로 벗기면 데이터가 나와요.',
+    ],
+    arrived: arrivedAtServerB,
+    successSummary: '데이터를 꺼냈어요. L2, L3, L4 순서로 바깥부터 벗겼어요.',
   },
 ];

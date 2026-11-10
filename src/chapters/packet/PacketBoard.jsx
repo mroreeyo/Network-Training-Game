@@ -1,8 +1,12 @@
+import DecapsulateBoard from './DecapsulateBoard.jsx';
 import EncapsulateBoard from './EncapsulateBoard.jsx';
 
 // 챕터 1 게임판. 모든 챕터의 게임판은 같은 props(stage, onFinish)를 받는다 (계획서 3.5절).
-// 지금은 보내는 쪽(캡슐화) 화면만 있다. 받는 쪽(역캡슐화) 화면은 스테이지 5를 만들 때 여기서 고르게 한다.
+// 받은 상자를 벗기는 스테이지(arrived가 있음)는 받는 쪽 화면, 나머지는 보내는 쪽 화면을 쓴다.
 function PacketBoard({ stage, onFinish }) {
+  if (stage.arrived) {
+    return <DecapsulateBoard stage={stage} onFinish={onFinish} />;
+  }
   return <EncapsulateBoard stage={stage} onFinish={onFinish} />;
 }
 
