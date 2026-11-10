@@ -4,6 +4,7 @@ import {
   calculateStars,
   countClearedStages,
   getEarnedConceptCards,
+  isChapterCleared,
   isChapterUnlocked,
   isStageUnlocked,
   mergeBestStars,
@@ -62,11 +63,32 @@ describe('해금', () => {
   it('모르는 챕터는 닫혀 있다', () => {
     expect(isChapterUnlocked(makeProgress([]), chapters, 'unknown')).toBe(false);
   });
+  it('앞 챕터 중 하나라도 덜 깼으면 닫혀 있다', () => {
+    const allSubnet = ['subnet-1', 'subnet-2', 'subnet-3', 'subnet-4', 'subnet-5'];
+    const progress = makeProgress([...allPacket.slice(0, 4), ...allSubnet]);
+    expect(isChapterUnlocked(progress, chapters, 'firewall')).toBe(false);
+    expect(isChapterUnlocked(makeProgress([...allPacket, ...allSubnet]), chapters, 'firewall')).toBe(true);
+  });
+  it('스테이지가 없는 챕터는 깬 것으로 보지 않는다', () => {
+    const withEmptyChapter = [
+      { id: 'packet', stageCount: 5 },
+      { id: 'subnet', stageCount: 0 },
+      { id: 'firewall', stageCount: 5 },
+    ];
+    expect(isChapterCleared(makeProgress([]), withEmptyChapter[1])).toBe(false);
+    expect(isChapterUnlocked(makeProgress(allPacket), withEmptyChapter, 'firewall')).toBe(false);
+  });
   it('스테이지는 앞 스테이지를 깨야 열린다', () => {
     const progress = makeProgress(['packet-1']);
     expect(isStageUnlocked(progress, 'packet', 1)).toBe(true);
     expect(isStageUnlocked(progress, 'packet', 2)).toBe(true);
     expect(isStageUnlocked(progress, 'packet', 3)).toBe(false);
+  });
+  it('주소에서 읽은 글자 번호도 숫자와 똑같이 판정한다', () => {
+    const progress = makeProgress(['packet-1']);
+    expect(isStageUnlocked(makeProgress([]), 'packet', '1')).toBe(true);
+    expect(isStageUnlocked(progress, 'packet', '2')).toBe(true);
+    expect(isStageUnlocked(progress, 'packet', '3')).toBe(false);
   });
 });
 

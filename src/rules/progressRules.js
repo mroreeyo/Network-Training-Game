@@ -50,26 +50,36 @@ export function countClearedStages(progress, chapter) {
   return count;
 }
 
+// 스테이지가 하나도 없는 챕터(아직 만들지 않은 챕터)는 깬 것으로 보지 않는다.
+// 0개 중 0개를 "모두 깼다"고 보면 다음 챕터가 바로 열려 버린다.
 export function isChapterCleared(progress, chapter) {
+  if (chapter.stageCount === 0) {
+    return false;
+  }
   return countClearedStages(progress, chapter) === chapter.stageCount;
 }
 
-// 챕터 1은 항상 열려 있고, 나머지는 바로 앞 챕터를 모두 깨야 열린다.
-// 챕터 4는 앞의 세 챕터를 모두 깬 뒤에만 도달할 수 있어서 같은 규칙으로 충분하다.
+// 챕터 1은 항상 열려 있고, 나머지는 앞 챕터를 모두 깨야 열린다.
+// 바로 앞 챕터만 보지 않는 이유: 앞 챕터에 스테이지가 늘어나 예전 기록이 모자라게 되면
+// 챕터 2는 닫혔는데 챕터 3은 열리는 일이 생기기 때문이다.
 export function isChapterUnlocked(progress, chapters, chapterId) {
   const index = chapters.findIndex((chapter) => chapter.id === chapterId);
-  if (index <= 0) {
-    return index === 0;
+  if (index === -1) {
+    return false;
   }
-  return isChapterCleared(progress, chapters[index - 1]);
+  const previousChapters = chapters.slice(0, index);
+  return previousChapters.every((chapter) => isChapterCleared(progress, chapter));
 }
 
 // 스테이지 1은 항상 열려 있고, 나머지는 바로 앞 스테이지를 깨야 열린다.
+// 챕터가 열려 있는지는 여기서 보지 않으므로, 화면에서는 isChapterUnlocked를 먼저 확인한다.
 export function isStageUnlocked(progress, chapterId, stageNumber) {
-  if (stageNumber === 1) {
+  // 주소에서 읽은 스테이지 번호는 글자('1')라서 숫자로 바꾼 뒤 비교한다.
+  const number = Number(stageNumber);
+  if (number === 1) {
     return true;
   }
-  return isStageCleared(progress, chapterId, stageNumber - 1);
+  return isStageCleared(progress, chapterId, number - 1);
 }
 
 // 개념 카드는 저장하지 않고 클리어 기록에서 계산한다.
