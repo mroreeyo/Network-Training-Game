@@ -9,7 +9,8 @@
 
 .list {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  /* minmax(0, 1fr): 카드 안의 글자가 길어도 칸이 화면 밖으로 늘어나지 않게 한다. */
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-3);
 }
 
@@ -27,7 +28,7 @@
   }
 
   .list {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-2);
   }
 }

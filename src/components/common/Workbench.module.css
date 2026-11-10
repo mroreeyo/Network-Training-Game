@@ -1,5 +1,7 @@
 .workbench {
   display: grid;
+  /* minmax(0, 1fr): 게임판 안의 내용이 넓어도 작업대가 화면 밖으로 늘어나지 않게 한다. */
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-8);
   padding: var(--space-6);
   border: var(--border-ink);
