@@ -22,4 +22,24 @@ describe('findMissingImportComments', () => {
   it('node: 기본 기능도 라이브러리로 본다', () => {
     expect(findMissingImportComments("import { join } from 'node:path';")).toHaveLength(1);
   });
+  it('여러 줄에 걸친 import도 검사한다', () => {
+    const code = "import {\n  DndContext,\n  useSensor,\n} from '@dnd-kit/core';";
+    expect(findMissingImportComments(code)).toEqual([{ lineNumber: 1, line: 'import {' }]);
+    expect(findMissingImportComments(`// [라이브러리] @dnd-kit/core: 드래그\n${code}`)).toEqual([]);
+  });
+  it('여러 줄에 걸친 상대 경로 import는 검사하지 않는다', () => {
+    const code = "import {\n  checkHeaderOrder,\n} from './packetRules.js';";
+    expect(findMissingImportComments(code)).toEqual([]);
+  });
+  it('from 없이 불러오는 라이브러리도 검사한다', () => {
+    expect(findMissingImportComments("import 'some-font/style.css';")).toHaveLength(1);
+  });
+  it('여러 줄 주석(*/로 끝남)도 주석으로 본다', () => {
+    const code = "/* [라이브러리] react\n   왜: 화면 상태를 만든다 */\nimport { useState } from 'react';";
+    expect(findMissingImportComments(code)).toEqual([]);
+  });
+  it('import.meta와 import()는 import 문으로 보지 않는다', () => {
+    const code = "import.meta.hot.accept();\nconst page = await import('react');\n// 주석\nimport { useState } from 'react';";
+    expect(findMissingImportComments(code)).toEqual([]);
+  });
 });

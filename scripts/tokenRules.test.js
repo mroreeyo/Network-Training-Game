@@ -33,6 +33,39 @@ describe('findTokenProblems', () => {
   it('주석 안의 값은 검사하지 않는다', () => {
     expect(findTokenProblems('/* 2px: 선 굵기 */\n// #FFFFFF는 라벨색')).toEqual([]);
   });
+  it('코드 뒤에 붙은 주석 안의 값도 검사하지 않는다', () => {
+    expect(findTokenProblems("const size = 'var(--size-touch)'; // 48px 누르는 영역")).toEqual([]);
+    expect(ruleNames('padding: 12px; // 설명')).toEqual(['px 값']);
+  });
+  it('문자열이나 한 줄 주석 안의 /* 를 주석 시작으로 보지 않는다', () => {
+    const jsx = '<input accept="image/*" />\n<p style={{ color: "#fff" }} />\n{/* 끝 */}';
+    expect(findTokenProblems(jsx).map((problem) => problem.lineNumber)).toEqual([2]);
+    const withPath = "// 경로: src/components/*.jsx\nconst color = '#FFFFFF';\n{/* 끝 */}";
+    expect(findTokenProblems(withPath).map((problem) => problem.lineNumber)).toEqual([2]);
+  });
+  it('주소(https://)는 주석으로 보지 않는다', () => {
+    expect(ruleNames('background: url(https://example.com/a.png) 4px;')).toEqual(['px 값']);
+  });
+  it('색이 아닌 #은 잡지 않는다', () => {
+    expect(findTokenProblems('<p>It&#039;s</p>')).toEqual([]);
+    expect(findTokenProblems('<p>#12345</p>')).toEqual([]);
+  });
+  it('대문자로 써도 잡는다', () => {
+    expect(ruleNames('color: RGB(0, 0, 0);')).toEqual(['rgb/hsl 색']);
+    expect(ruleNames('padding: 4PX;')).toEqual(['px 값']);
+  });
+  it('rgb, hsl이 아닌 색 함수도 잡는다', () => {
+    expect(ruleNames('color: oklch(50% 0.1 200);')).toEqual(['rgb/hsl 색']);
+    expect(ruleNames('color: hwb(0 0% 0%);')).toEqual(['rgb/hsl 색']);
+  });
+  it('JSX style에 붙여 쓴 꾸밈도 잡는다', () => {
+    expect(ruleNames("<div style={{ boxShadow: 'none' }} />")).toEqual(['그림자']);
+    expect(ruleNames("<div style={{ backdropFilter: 'blur(1em)' }} />")).toEqual(['흐림 효과']);
+    expect(ruleNames('filter: drop-shadow(0 0 1em black);')).toEqual(['그림자']);
+  });
+  it('@media와 같은 줄에 쓴 값은 검사한다', () => {
+    expect(ruleNames('@media (max-width: 860px) { .a { padding: 12px; } }')).toEqual(['px 값']);
+  });
   it('여러 줄 주석 뒤에서도 줄 번호가 맞다', () => {
     const css = '/* 첫 줄\n   둘째 줄 12px */\n.a {\n  margin: 4px;\n}';
     expect(findTokenProblems(css)).toEqual([{ lineNumber: 4, ruleName: 'px 값', line: 'margin: 4px;' }]);

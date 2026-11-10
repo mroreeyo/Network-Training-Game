@@ -386,6 +386,8 @@ React(JavaScript) + Vite로 만들고, 라이브러리는 꼭 필요한 2개만 
 | 애니메이션 | CSS transition | 패킷 이동 정도는 CSS로 충분해서 라이브러리를 추가하지 않는다. |
 | 진행도 저장 | localStorage | 서버 없이 브라우저에 저장한다. 읽기·쓰기는 `utils/storage.js` 한 곳에서만 한다. |
 | 배포 | 정적 호스팅 (Vercel 등) | 빌드 결과만 올리면 링크로 공유할 수 있다. |
+| 규칙 테스트 (개발용) | Vitest | `rules/`의 순수 함수를 화면 없이 테스트한다. Vite와 설정을 공유해서 추가 설정이 거의 없다. 개발 의존성이라 배포 결과물에는 들어가지 않는다 (계획서 D3). |
+| 코드 검사 (개발용) | ESLint (+ eslint-plugin-react, eslint-plugin-react-hooks, globals) | 함수 30줄, 삼항 연산자 중첩 금지를 사람 대신 도구가 확인한다. 개발 의존성이라 배포 결과물에는 들어가지 않는다. |
 
 ### 폴더 구조
 
