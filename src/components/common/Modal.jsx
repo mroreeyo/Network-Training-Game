@@ -18,12 +18,20 @@ function Modal({ open, onClose, titleId, children }) {
     }
   }, [open]);
 
+  // cancel은 Esc를 눌렀을 때 난다. 모달 안에 연 다른 모달이나 파일 선택 창의 cancel도
+  // 여기까지 올라오므로, 이 dialog에서 난 것일 때만 닫는다.
+  function handleCancel(event) {
+    if (event.target === event.currentTarget) {
+      onClose();
+    }
+  }
+
   return (
     <dialog
       ref={dialogRef}
       className={styles.modal}
       aria-labelledby={titleId}
-      onCancel={onClose}
+      onCancel={handleCancel}
     >
       {open ? children : null}
     </dialog>

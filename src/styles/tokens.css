@@ -1,7 +1,10 @@
 /* src/styles/tokens.css
    색·글꼴·간격은 여기 값만 쓴다.
-   이름은 물류 센터 콘셉트에서 가져왔다. (바닥, 라벨, 잉크, 컨베이어, 테이프, 상자) */
-:root {
+   이름은 물류 센터 콘셉트에서 가져왔다. (바닥, 라벨, 잉크, 컨베이어, 테이프, 상자)
+   ::backdrop에도 적는 이유: 조금 오래된 브라우저에서는 모달 뒤 배경(::backdrop)이
+   :root의 토큰을 물려받지 못해서 --color-scrim이 비어 버린다. */
+:root,
+::backdrop {
   /* 색 */
   --color-floor: #E6E9EC;
   --color-label: #FFFFFF;

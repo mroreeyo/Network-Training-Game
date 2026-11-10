@@ -34,7 +34,7 @@ function StatusSamples() {
         <StarRating stars={2} />
         <StarRating stars={3} />
       </div>
-      <ProgressBar done={2} total={5} label="스테이지 5개 중 2개 완료" />
+      <ProgressBar done={2} total={5} />
     </Card>
   );
 }

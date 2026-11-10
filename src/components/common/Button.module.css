@@ -15,7 +15,8 @@
   transition: transform var(--motion-fast);
 }
 
-.button:active {
+/* 비활성 버튼도 누르는 동안에는 :active가 되므로, 누를 수 있는 버튼만 내려가게 한다. */
+.button:active:not(:disabled) {
   transform: translateY(var(--line));
 }
 
