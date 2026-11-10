@@ -208,8 +208,11 @@ import { DndContext } from '@dnd-kit/core';
 ```css
 /* src/styles/tokens.css
    색·글꼴·간격은 여기 값만 쓴다.
-   이름은 물류 센터 콘셉트에서 가져왔다. (바닥, 라벨, 잉크, 컨베이어, 테이프, 상자) */
-:root {
+   이름은 물류 센터 콘셉트에서 가져왔다. (바닥, 라벨, 잉크, 컨베이어, 테이프, 상자)
+   ::backdrop에도 적는 이유: 조금 오래된 브라우저에서는 모달 뒤 배경(::backdrop)이
+   :root의 토큰을 물려받지 못해서 --color-scrim이 비어 버린다. */
+:root,
+::backdrop {
   /* 색 */
   --color-floor: #E6E9EC;
   --color-label: #FFFFFF;
@@ -252,6 +255,8 @@ import { DndContext } from '@dnd-kit/core';
   --size-touch: var(--space-12);             /* 48px: 누르는 영역 (접근성 기준 44px 이상) */
   --width-page: calc(var(--space-12) * 24);  /* 1152px: 화면 최대 폭 */
   --width-text: 40em;                        /* 본문 한 줄은 한글 40자 이내 */
+  /* 모달 뒤를 덮는 색. 새 색을 만들지 않고 잉크색과 바닥색을 섞는다. */
+  --color-scrim: color-mix(in srgb, var(--color-ink) 60%, var(--color-floor));
 
   /* 움직임 */
   --motion-fast: 120ms;   /* 누르기, 놓기 */

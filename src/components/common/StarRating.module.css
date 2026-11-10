@@ -1,0 +1,22 @@
+.stickers {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.sticker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-12);
+  height: var(--space-8);
+  border: var(--line) dashed var(--color-ink);
+  border-radius: var(--radius-label);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-label);
+}
+
+/* 테이프색 면은 흰 면과 대비가 낮아서, 얻은 칸은 실선 테두리와 '검수' 글자로도 알린다. */
+.earned {
+  border-style: solid;
+  background: var(--color-tape);
+}

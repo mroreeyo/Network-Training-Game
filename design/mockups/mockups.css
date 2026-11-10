@@ -629,8 +629,8 @@ button.header-label:active {
   place-items: center;
   min-height: 100dvh;
   padding: var(--space-6) var(--space-4);
-  /* 모달 뒤를 어둡게 덮는 색이다. 새 색을 만들지 않고 잉크색과 바닥색을 섞어 쓴다. */
-  background: color-mix(in srgb, var(--color-ink) 60%, var(--color-floor));
+  /* 모달 뒤를 어둡게 덮는 색이다. 섞는 식은 tokens.css에 있다. */
+  background: var(--color-scrim);
 }
 
 .inspection {
