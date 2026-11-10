@@ -6,4 +6,5 @@
 npm install
 npm run dev     # 개발 서버
 npm run build   # 정적 파일 만들기 (dist/)
+npm run check   # lint + 테스트 + 토큰 검사 + import 주석 검사 + 빌드 (PR 전에 실행, CI도 같은 것을 돌림)
 ```
