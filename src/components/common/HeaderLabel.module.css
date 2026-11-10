@@ -55,6 +55,8 @@
 
 .body {
   display: grid;
+  /* min-width: 0이 없으면 긴 주소가 카드를 화면 밖으로 밀어낸다. */
+  min-width: 0;
   gap: var(--space-1);
   padding: var(--space-2) var(--space-3);
 }
@@ -69,9 +71,11 @@
   font-size: var(--text-sm);
 }
 
+/* 주소가 길어서 한 줄에 들어가지 않으면 값이 다음 줄로 내려간다. */
 .row {
   display: flex;
-  gap: var(--space-2);
+  flex-wrap: wrap;
+  column-gap: var(--space-2);
 }
 
 .rowLabel {

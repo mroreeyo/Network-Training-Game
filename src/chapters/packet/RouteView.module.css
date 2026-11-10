@@ -1,11 +1,19 @@
-/* 장비 칸은 내용만큼만 차지하고, 구간(벨트)이 남는 폭을 채운다. */
+/* 장비 칸은 내용만큼만 차지하고, 구간(벨트)이 남는 폭을 채운다.
+   글꼴에 따라 그래도 넘치면 화면 전체가 아니라 경로 표 안에서만 옆으로 밀리게 한다 (overflow-x).
+   안쪽 여백은 상자가 있는 장비의 외곽선이 잘리지 않게 하려고 둔다. */
 .route {
   display: flex;
   align-items: center;
+  padding: calc(var(--line) * 2);
+  overflow-x: auto;
 }
 
+/* 장비가 많아서 한 줄에 다 들어가지 않으면 라우터 칸이 줄어들고, 두 포트가 위아래로 쌓인다.
+   min-content: 주소 한 줄보다 좁아지지는 않게 해서 글자가 칸 밖으로 나가지 않게 한다. */
 .stop {
   display: grid;
+  flex: 0 1 auto;
+  min-width: min-content;
   gap: var(--space-1);
   padding: var(--space-3) var(--space-4);
   border: var(--border-ink);
@@ -31,7 +39,9 @@
 
 .ports {
   display: flex;
-  gap: var(--space-6);
+  flex-wrap: wrap;
+  column-gap: var(--space-6);
+  row-gap: var(--space-2);
 }
 
 .addresses {
@@ -43,13 +53,15 @@
 
 .addresses dt {
   color: var(--color-ink-quiet);
+  white-space: nowrap;
 }
 
 .link {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: 1;
+  /* 구간 이름이 잘리지 않게 줄어들지는 않고, 남는 폭만 채운다. */
+  flex: 1 0 auto;
   min-width: var(--space-12);
   height: var(--space-6);
   padding: 0 var(--space-2);
@@ -67,10 +79,11 @@
 }
 
 /* 경로가 한 줄에 들어가지 않는 폭부터는 위에서 아래로 흐르게 한다. */
-@media (max-width: 1040px) {
+@media (max-width: 1200px) {
   .route {
     flex-direction: column;
     align-items: flex-start;
+    overflow-x: visible;
   }
 
   .stop {

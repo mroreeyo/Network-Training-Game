@@ -1,5 +1,7 @@
 .stage {
   display: grid;
+  /* minmax(0, 1fr): 작업대나 트레이의 내용이 넓어도 화면 전체가 옆으로 늘어나지 않게 한다. */
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-6);
 }
 
