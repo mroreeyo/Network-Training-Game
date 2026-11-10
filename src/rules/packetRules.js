@@ -171,7 +171,7 @@ function judgeTransportCard(card, delivery) {
   }
   // 맞는 포트 번호는 알려 주지 않는다. 정답을 보여 주면 다시 할 때 생각할 것이 없어진다.
   return makeFailure(
-    `목적지 포트 ${card.values.destinationPort}번은 ${delivery.application}이 쓰는 포트가 아니에요.`,
+    `목적지 포트 ${card.values.destinationPort}번은 ${delivery.application}에서 쓰는 포트가 아니에요.`,
     '작업 지시서에 적힌 포트 번호와 같은 L4 헤더를 골라 보세요.',
     card,
   );

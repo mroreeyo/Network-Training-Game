@@ -68,6 +68,7 @@ function useStageAttempt(onCleared) {
 // 다시 하기를 누르면 게임판이 새로 만들어져서 키보드 포커스가 화면 맨 앞으로 빠진다.
 // 스테이지 제목으로 옮겨서, Tab을 누르면 바로 게임판 쪽으로 이어지게 한다.
 // boardKey는 다시 하기를 누를 때마다 1씩 늘어난다. 처음 들어왔을 때(0)는 포커스를 옮기지 않는다.
+// 커스텀 훅을 쓰는 이유: StageSession 안에 useEffect를 그대로 적으면 함수 하나가 30줄을 넘는다.
 function useFocusTitleAfterRetry(boardKey) {
   useEffect(() => {
     if (boardKey > 0) {
@@ -78,7 +79,7 @@ function useFocusTitleAfterRetry(boardKey) {
 
 // 한 번의 스테이지 도전. 공통 틀(StageLayout)에 게임판(Board)을 끼우고 결과 화면을 붙인다.
 // onCleared(stars)는 스테이지를 깼을 때 불리며, 진행도 저장은 부르는 쪽이 맡는다.
-export function StageSession({ chapter, stage, Board, conceptCard, onCleared }) {
+function StageSession({ chapter, stage, Board, conceptCard, onCleared }) {
   const { progress } = useProgress();
   const attempt = useStageAttempt(onCleared);
   const { outcome } = attempt;

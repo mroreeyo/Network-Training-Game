@@ -14,15 +14,17 @@ import styles from './EncapsulateBoard.module.css';
 const NEXT_LABEL_ZONE = 'next-label';
 
 // 상자에 붙이는 카드의 상태: 이번 작업에서 붙인 카드, 지금 고른 카드(selectedId), 트레이에 남은 카드.
+// 커스텀 훅을 쓰는 이유: useEncapsulation에 함께 두면 함수 하나가 30줄을 넘어서, 카드 붙이기 상태만 따로 나눴다.
 function useAttachedCards(step) {
   const [attached, setAttached] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const trayCards = step.tray.filter((card) => !attached.some((item) => item.id === card.id));
+  // 이번 작업에 필요한 장수만큼 붙였으면 더 붙일 수 없고, 패킷을 보낼 수 있다.
+  const isFull = attached.length >= step.layers.length;
 
   // 드래그로 놓든 카드와 자리를 차례로 누르든 이 함수 하나를 부른다.
   function placeCard(cardId, zoneId) {
     const card = trayCards.find((item) => item.id === cardId);
-    const isFull = attached.length >= step.layers.length;
     if (zoneId !== NEXT_LABEL_ZONE || !card || isFull) {
       return;
     }
@@ -40,7 +42,7 @@ function useAttachedCards(step) {
     setSelectedId(null);
   }
 
-  return { attached, trayCards, selectedId, setSelectedId, placeCard, undoLastLabel, clearAttached };
+  return { attached, trayCards, isFull, selectedId, setSelectedId, placeCard, undoLastLabel, clearAttached };
 }
 
 // 보내는 쪽: 헤더 카드를 순서대로 붙여서 목적지까지 보낸다.
@@ -71,7 +73,8 @@ function useEncapsulation(stage, onFinish) {
       return;
     }
     const following = stage.deliveries[next.deliveryIndex];
-    setNotice(next.kind === 'next-delivery' ? `${delivery.application} 배송 완료. 이어서 ${following.application}을 보내요.` : '');
+    // 프로그램 이름 뒤에 조사(을/를)를 바로 붙이지 않는다. 이름의 받침에 따라 조사가 달라지기 때문이다.
+    setNotice(next.kind === 'next-delivery' ? `${delivery.application} 배송 완료. 이어서 ${following.application} 상자를 보내요.` : '');
     setPosition({ deliveryIndex: next.deliveryIndex, stepIndex: next.stepIndex, labels: next.labels });
     cards.clearAttached();
   }
@@ -80,13 +83,16 @@ function useEncapsulation(stage, onFinish) {
 }
 
 function BoxArea({ board }) {
-  const { step, attached, selectedId } = board;
-  const isFull = attached.length >= step.layers.length;
+  const { step, attached, selectedId, isFull } = board;
   const zoneName = step.layers.length === 1 ? `${step.layers[0]} 헤더 자리` : '다음 헤더 자리';
   const zoneHint = selectedId ? '고른 카드를 여기에 붙여요.' : '부품 트레이에서 카드를 먼저 골라요.';
   return (
     <div className={styles.packing}>
-      <p className="text-body">{step.prompt}</p>
+      {/* role="status": 작업이나 배송이 바뀌면 화면 낭독기가 바뀐 안내문을 읽어 준다. */}
+      <div role="status">
+        {board.notice ? <p className="text-label">{board.notice}</p> : null}
+        <p className="text-body">{step.prompt}</p>
+      </div>
       <PacketBox payload={board.delivery.payload} labels={[...board.labels, ...attached]}>
         {isFull ? null : (
           <li>
@@ -103,7 +109,6 @@ function BoxArea({ board }) {
         </Button>
       </div>
       <p className="text-quiet">{isFull ? '라벨을 모두 붙였어요. 패킷을 보내 보세요.' : `헤더 ${step.layers.length}장을 붙이면 보낼 수 있어요.`}</p>
-      {board.notice ? <p className="text-label">{board.notice}</p> : null}
     </div>
   );
 }

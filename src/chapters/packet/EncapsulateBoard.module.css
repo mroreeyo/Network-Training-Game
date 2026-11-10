@@ -1,8 +1,8 @@
+/* 상자와 버튼은 작업대 가운데에 두지만 글자는 가운데 정렬하지 않는다 (디자인 가이드 정렬 규칙: 본문은 왼쪽 정렬). */
 .packing {
   display: grid;
   justify-items: center;
   gap: var(--space-4);
-  text-align: center;
 }
 
 .actions {

@@ -25,7 +25,36 @@ const allSteps = packetStages.flatMap((stage) => {
   });
 });
 
+const allDeliveries = packetStages.flatMap((stage) => {
+  return stage.deliveries.map((delivery) => ({ stage, delivery }));
+});
+
+// 경로 표의 장비 한 칸에 적힌 주소 목록. kind는 'ip' 또는 'mac'이다.
+function listStopAddresses(stop, kind) {
+  return stop.ports.map((port) => port[kind]);
+}
+
 describe('packetStages 데이터', () => {
+  // 경로 표(stops)와 판정용 값(sourceIp, destinationIp, segments)은 같은 주소를 따로 적는다.
+  // 한쪽만 고치면 화면에 보이는 주소로는 정답 카드를 찾을 수 없게 되므로 서로 맞는지 확인한다.
+  it('경로 표에 보이는 주소가 판정에 쓰는 주소와 같다', () => {
+    allDeliveries.forEach(({ stage, delivery }) => {
+      const { stops, segments } = delivery;
+      const where = `스테이지 ${stage.number}: ${delivery.application}`;
+      expect(stops.length, where).toBe(segments.length + 1);
+      expect(listStopAddresses(stops[0], 'ip'), where).toContain(delivery.sourceIp);
+      expect(listStopAddresses(stops[stops.length - 1], 'ip'), where).toContain(delivery.destinationIp);
+      segments.forEach((segment, index) => {
+        expect(listStopAddresses(stops[index], 'mac'), where).toContain(segment.sourceMac);
+        expect(listStopAddresses(stops[index + 1], 'mac'), where).toContain(segment.destinationMac);
+      });
+    });
+  });
+  it('작업마다 경로에 있는 구간을 가리킨다', () => {
+    allSteps.forEach(({ stage, delivery, step }) => {
+      expect(delivery.segments[step.segmentIndex], `스테이지 ${stage.number}: ${step.prompt}`).toBeDefined();
+    });
+  });
   it('스테이지 번호가 목록에서의 순서와 같다', () => {
     packetStages.forEach((stage, index) => {
       expect(stage.number).toBe(index + 1);

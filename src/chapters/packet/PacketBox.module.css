@@ -6,8 +6,6 @@
   border: var(--border-ink);
   border-radius: var(--radius-label);
   background: var(--color-box);
-  /* 상자는 작업대 가운데에 두지만, 상자 안의 제목과 라벨 글자는 왼쪽 정렬이다 (디자인 가이드 정렬 규칙). */
-  text-align: left;
 }
 
 .labels {
