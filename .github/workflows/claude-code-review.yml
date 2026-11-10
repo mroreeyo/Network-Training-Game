@@ -16,6 +16,10 @@ jobs:
       pull-requests: read
       issues: read
       id-token: write
+    env:
+      # 리뷰 플러그인이 띄우는 하위 에이전트가 백그라운드로 가지 않게 한다.
+      # 백그라운드로 가면 본 세션이 결과를 기다리지 않고 턴을 끝내서, 리뷰 없이 실행이 성공으로 끝난다.
+      CLAUDE_CODE_DISABLE_BACKGROUND_TASKS: "1"
     steps:
       - uses: actions/checkout@v6
         with:
