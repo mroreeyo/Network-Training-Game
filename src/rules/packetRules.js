@@ -50,16 +50,33 @@ function makeRecord(card) {
   return { title: `붙인 ${card.layer} ${description.name}`, rows: description.rows };
 }
 
-// 붙인 순서가 L4 → L3 → L2인지 확인한다.
+// 붙여야 하는데 붙이지 않은 계층을 찾는다. 모두 붙였으면 undefined를 돌려준다.
+function findMissingLayer(attachedCards, requiredLayers) {
+  const attachedLayers = attachedCards.map((card) => card.layer);
+  for (const layer of requiredLayers) {
+    if (!attachedLayers.includes(layer)) {
+      return layer;
+    }
+  }
+  return undefined;
+}
+
+// 필요한 헤더를 빠짐없이, 필요한 만큼만, L4 → L3 → L2 순서로 붙였는지 확인한다.
+// 빠진 계층을 순서보다 먼저 보는 이유: 같은 계층 카드를 두 장 붙였을 때(예: L4, L3, L3)
+// "L3를 L2보다 먼저 붙였어요"처럼 맞는 순서를 틀렸다고 알려 주지 않으려고.
 export function checkHeaderOrder(attachedCards, requiredLayers) {
+  const missingLayer = findMissingLayer(attachedCards, requiredLayers);
+  if (missingLayer !== undefined) {
+    return makeFailure(`${missingLayer} 헤더가 빠진 채로 보냈어요.`, '헤더를 모두 붙인 다음에 보내 보세요.');
+  }
+  if (attachedCards.length > requiredLayers.length) {
+    return makeFailure(
+      `헤더 ${requiredLayers.length}장이 필요한데 ${attachedCards.length}장을 붙였어요.`,
+      '이번 작업에 필요한 헤더만 붙여 보세요.',
+    );
+  }
   for (let index = 0; index < requiredLayers.length; index += 1) {
     const attached = attachedCards[index];
-    if (attached === undefined) {
-      return makeFailure(
-        `${requiredLayers[index]} 헤더가 빠진 채로 보냈어요.`,
-        '헤더를 모두 붙인 다음에 보내 보세요.',
-      );
-    }
     if (attached.layer !== requiredLayers[index]) {
       return makeFailure(
         `${attached.layer} 헤더를 ${requiredLayers[index]} 헤더보다 먼저 붙였어요. 바깥 헤더일수록 나중에 붙여요.`,
@@ -101,6 +118,16 @@ export function getSegmentMacAddresses(delivery, segmentIndex) {
   return delivery.segments[segmentIndex];
 }
 
+// 이미 지나온 구간의 MAC을 그대로 쓴 카드인지 확인한다.
+// 바로 앞 구간만 보지 않는 이유: 라우터가 2대면 두 구간 전의 MAC을 다시 쓸 수도 있다.
+function isEarlierSegmentHeader(card, delivery, segmentIndex) {
+  const { sourceMac, destinationMac } = card.values;
+  const earlierSegments = delivery.segments.slice(0, segmentIndex);
+  return earlierSegments.some(
+    (segment) => sourceMac === segment.sourceMac && destinationMac === segment.destinationMac,
+  );
+}
+
 // L2: MAC 주소는 같은 구간 안에서만 통하는 주소라서 구간마다 바뀐다.
 export function classifyLinkHeader(card, delivery, segmentIndex) {
   const expected = getSegmentMacAddresses(delivery, segmentIndex);
@@ -111,8 +138,7 @@ export function classifyLinkHeader(card, delivery, segmentIndex) {
   if (sourceMac === expected.destinationMac && destinationMac === expected.sourceMac) {
     return 'swapped';
   }
-  const previous = delivery.segments[segmentIndex - 1];
-  if (previous && sourceMac === previous.sourceMac && destinationMac === previous.destinationMac) {
+  if (isEarlierSegmentHeader(card, delivery, segmentIndex)) {
     return 'previous-segment';
   }
   if (destinationMac === expected.destinationMac) {
@@ -126,21 +152,27 @@ export function classifyLinkHeader(card, delivery, segmentIndex) {
   return 'other';
 }
 
+// 전송 방식을 고르는 배송이 아니면 이유 문장(transportReason)이 비어 있어서, 있을 때만 덧붙인다.
+function describeWrongProtocol(card, delivery) {
+  const why = `${delivery.application}에는 ${delivery.transport.protocol}가 맞는데 ${card.values.protocol}를 붙였어요.`;
+  if (!delivery.transportReason) {
+    return why;
+  }
+  return `${why} ${delivery.transportReason}`;
+}
+
 function judgeTransportCard(card, delivery) {
   const kind = classifyTransportHeader(card, delivery.transport);
   if (kind === 'correct') {
     return { passed: true };
   }
   if (kind === 'wrong-protocol') {
-    return makeFailure(
-      `${delivery.application}에는 ${delivery.transport.protocol}가 맞는데 ${card.values.protocol}를 붙였어요. ${delivery.transportReason}`,
-      '전송 방식을 다시 골라 보세요.',
-      card,
-    );
+    return makeFailure(describeWrongProtocol(card, delivery), '전송 방식을 다시 골라 보세요.', card);
   }
+  // 맞는 포트 번호는 알려 주지 않는다. 정답을 보여 주면 다시 할 때 생각할 것이 없어진다.
   return makeFailure(
-    `목적지 포트가 ${card.values.destinationPort}번이에요. 이 통신은 ${delivery.transport.destinationPort}번 포트로 가야 해요.`,
-    '목적지 포트가 맞는 L4 헤더를 골라 보세요.',
+    `목적지 포트 ${card.values.destinationPort}번은 ${delivery.application}이 쓰는 포트가 아니에요.`,
+    '작업 지시서에 적힌 포트 번호와 같은 L4 헤더를 골라 보세요.',
     card,
   );
 }
@@ -180,7 +212,7 @@ const LINK_FAILURES = {
   },
   'wrong-source': {
     why: '출발지 MAC이 이번 구간에서 상자를 내보내는 포트의 MAC과 달라요.',
-    next: '라우터는 상자가 나가는 쪽 포트의 MAC을 출발지로 써요. 경로 표에서 확인해 보세요.',
+    next: '경로 표에서 이번 구간으로 상자를 내보내는 장비의 MAC을 확인해 보세요. 라우터라면 상자가 나가는 쪽 포트의 MAC이에요.',
   },
   swapped: {
     why: '출발지 MAC과 목적지 MAC이 바뀌었어요.',
@@ -201,6 +233,16 @@ function judgeLinkCard(card, delivery, segmentIndex) {
   return makeFailure(message.why, message.next, card);
 }
 
+function judgeCard(card, delivery, segmentIndex) {
+  if (card.layer === 'L4') {
+    return judgeTransportCard(card, delivery);
+  }
+  if (card.layer === 'L3') {
+    return judgeNetworkCard(card, delivery);
+  }
+  return judgeLinkCard(card, delivery, segmentIndex);
+}
+
 // 한 단계(step)에서 붙인 카드를 판정한다. 순서를 먼저 보고, 그다음 카드 값을 하나씩 본다.
 export function judgeStep(step, attachedCards, delivery) {
   const orderResult = checkHeaderOrder(attachedCards, step.layers);
@@ -208,14 +250,7 @@ export function judgeStep(step, attachedCards, delivery) {
     return orderResult;
   }
   for (const card of attachedCards) {
-    let result = { passed: true };
-    if (card.layer === 'L4') {
-      result = judgeTransportCard(card, delivery);
-    } else if (card.layer === 'L3') {
-      result = judgeNetworkCard(card, delivery);
-    } else {
-      result = judgeLinkCard(card, delivery, step.segmentIndex);
-    }
+    const result = judgeCard(card, delivery, step.segmentIndex);
     if (!result.passed) {
       return result;
     }
@@ -239,8 +274,13 @@ export function describePeel(layer) {
 }
 
 // 받는 쪽은 바깥(L2)부터 벗긴다. 안쪽 헤더부터 벗기려고 하면 반송된다.
+// 가장 바깥 헤더를 remainingLayers의 맨 앞이 아니라 PEEL_ORDER에서 찾는 이유:
+// 상자의 라벨 목록은 붙인 순서(L4가 맨 앞)라서, 그대로 넘어오면 맨 앞이 가장 안쪽 헤더다.
 export function judgePeel(remainingLayers, pickedLayer) {
-  const outermost = remainingLayers[0];
+  const outermost = PEEL_ORDER.find((layer) => remainingLayers.includes(layer));
+  if (outermost === undefined) {
+    return makeFailure('벗길 헤더가 남아 있지 않아요.', '상자에서 데이터를 꺼내 보세요.');
+  }
   if (pickedLayer === outermost) {
     return { passed: true };
   }
