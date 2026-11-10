@@ -1,0 +1,12 @@
+.header {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-3);
+  margin-bottom: var(--space-8);
+}
+
+.section {
+  display: grid;
+  gap: var(--space-3);
+  margin-bottom: var(--space-8);
+}

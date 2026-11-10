@@ -1,0 +1,33 @@
+.stage {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.progress {
+  display: grid;
+  gap: var(--space-1);
+  min-width: calc(var(--space-12) * 4);
+}
+
+@media (max-width: 860px) {
+  .stage {
+    gap: var(--space-4);
+  }
+
+  .bar {
+    flex-wrap: nowrap;
+  }
+
+  .progress {
+    flex: 1;
+    min-width: 0;
+  }
+}
