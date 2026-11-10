@@ -17,6 +17,20 @@
 
 const PC_A = { name: 'PC A', ports: [{ ip: '192.168.0.10', mac: 'AA:AA:AA:00:00:0A' }] };
 const PC_B = { name: 'PC B', ports: [{ ip: '192.168.0.20', mac: 'CC:CC:CC:00:00:0C' }] };
+const SERVER_B = { name: '서버 B', ports: [{ ip: '10.0.0.20', mac: 'BB:BB:BB:00:00:0B' }] };
+
+// ---------- 모든 스테이지가 같이 쓰는 카드 만들기 ----------
+function makeTransportCard(id, protocol, destinationPort) {
+  return { id, layer: 'L4', values: { protocol, destinationPort } };
+}
+
+function makeIpCard(id, sourceIp, destinationIp) {
+  return { id, layer: 'L3', values: { sourceIp, destinationIp } };
+}
+
+function makeEthernetCard(id, sourceMac, destinationMac) {
+  return { id, layer: 'L2', values: { sourceMac, destinationMac } };
+}
 
 // ---------- 스테이지 1: 같은 네트워크 ----------
 // 트레이의 카드 순서는 정답 순서(L4, L3, L2)와 다르게 섞어 둔다. 순서를 스스로 정해야 하기 때문이다.
@@ -36,28 +50,13 @@ const sameNetworkDelivery = {
       layers: ['L4', 'L3', 'L2'],
       segmentIndex: 0,
       tray: [
-        { id: 'eth-a-b', layer: 'L2', values: { sourceMac: 'AA:AA:AA:00:00:0A', destinationMac: 'CC:CC:CC:00:00:0C' } },
-        { id: 'tcp-8080', layer: 'L4', values: { protocol: 'TCP', destinationPort: 8080 } },
-        { id: 'ip-a-b', layer: 'L3', values: { sourceIp: '192.168.0.10', destinationIp: '192.168.0.20' } },
+        makeEthernetCard('eth-a-b', 'AA:AA:AA:00:00:0A', 'CC:CC:CC:00:00:0C'),
+        makeTransportCard('tcp-8080', 'TCP', 8080),
+        makeIpCard('ip-a-b', '192.168.0.10', '192.168.0.20'),
       ],
     },
   ],
 };
-
-// ---------- 스테이지 2~4가 같이 쓰는 장비와 카드 만들기 ----------
-const SERVER_B = { name: '서버 B', ports: [{ ip: '10.0.0.20', mac: 'BB:BB:BB:00:00:0B' }] };
-
-function makeTransportCard(id, protocol, destinationPort) {
-  return { id, layer: 'L4', values: { protocol, destinationPort } };
-}
-
-function makeIpCard(id, sourceIp, destinationIp) {
-  return { id, layer: 'L3', values: { sourceIp, destinationIp } };
-}
-
-function makeEthernetCard(id, sourceMac, destinationMac) {
-  return { id, layer: 'L2', values: { sourceMac, destinationMac } };
-}
 
 // ---------- 스테이지 2: 라우터 1대 ----------
 // 오답 카드는 흔한 오해를 하나씩 담는다: 목적지 IP에 라우터 IP, 목적지 MAC에 최종 목적지 MAC,
@@ -93,7 +92,7 @@ const oneRouterDelivery = {
       tray: [
         makeIpCard('ip-to-router', '192.168.0.10', '192.168.0.1'),
         makeTransportCard('tcp-443', 'TCP', 443),
-        makeIpCard('ip-a-b', '192.168.0.10', '10.0.0.20'),
+        makeIpCard('ip-a-server-b', '192.168.0.10', '10.0.0.20'),
       ],
     },
     {
@@ -193,7 +192,8 @@ const twoRouterDelivery = {
         { label: '오른쪽', ip: '10.0.0.1', mac: '22:22:22:00:00:02' },
       ],
     },
-    { name: '웹 서버', ports: [{ ip: '10.0.0.20', mac: 'BB:BB:BB:00:00:0B' }] },
+    // 서버 B와 주소가 같은 장비라서 이름만 바꿔 쓴다.
+    { ...SERVER_B, name: '웹 서버' },
   ],
   segments: [
     { label: '구간 1', sourceMac: 'AA:AA:AA:00:00:0A', destinationMac: '11:11:11:00:00:01' },
@@ -228,7 +228,7 @@ const twoRouterDelivery = {
       tray: [
         makeEthernetCard('eth-segment-2', '11:11:11:00:00:02', '22:22:22:00:00:01'),
         makeEthernetCard('eth-segment-1-again', 'AA:AA:AA:00:00:0A', '11:11:11:00:00:01'),
-        makeEthernetCard('eth-to-final', '11:11:11:00:00:02', 'BB:BB:BB:00:00:0B'),
+        makeEthernetCard('eth-r1-to-final', '11:11:11:00:00:02', 'BB:BB:BB:00:00:0B'),
       ],
     },
     {
@@ -283,7 +283,7 @@ export const packetStages = [
     title: '라우터 2대를 거쳐 웹 서버까지 보내기',
     goal: 'PC A의 웹 요청을 라우터 2대를 거쳐 웹 서버까지 보내요. 웹 요청은 TCP 443번 포트를 써요. 구간이 3개라서 L2 헤더를 3번 붙여요.',
     hints: [
-      '구간마다 출발지 MAC은 상자를 내보내는 장비, 목적지 MAC은 바로 다음 장비예요.',
+      '구간마다 출발지 MAC은 상자를 내보내는 장비, 목적지 MAC은 바로 다음 장비예요. 라우터라면 상자가 나가는 쪽 포트의 MAC이 출발지예요.',
       'IP 헤더와 L4 헤더는 한 번만 붙이고, 라우터를 지날 때마다 L2 헤더만 새로 붙여요.',
     ],
     deliveries: [twoRouterDelivery],
