@@ -15,7 +15,7 @@ import {
 import { useProgress } from '../ProgressContext.jsx';
 import styles from './StageListPage.module.css';
 
-// 스테이지 화면으로 가는 '시작하기' 버튼은 스테이지 화면을 만들 때 추가한다.
+// 스테이지 화면으로 가는 '시작하기' 버튼은 챕터 1 게임판을 만들 때 추가한다.
 function StageRow({ chapter, number, progress }) {
   const stage = chapter.stages[number - 1];
   const unlocked = isStageUnlocked(progress, chapter.id, number);
