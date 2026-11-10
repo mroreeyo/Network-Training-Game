@@ -1,4 +1,4 @@
-// [라이브러리] react-router-dom: 주소에서 챕터·스테이지 번호를 읽고 다른 화면으로 보내는 도구 (자세한 이유는 App.jsx)
+// [라이브러리] react-router-dom: 주소에서 챕터 id를 읽고 다른 화면으로 보내는 도구 (자세한 이유는 App.jsx)
 import { Navigate, useParams } from 'react-router-dom';
 import Button from '../components/common/Button.jsx';
 import Card from '../components/common/Card.jsx';
@@ -19,8 +19,10 @@ import styles from './StageListPage.module.css';
 function StageRow({ chapter, number, progress }) {
   const stage = chapter.stages[number - 1];
   const unlocked = isStageUnlocked(progress, chapter.id, number);
+  const cleared = isStageCleared(progress, chapter.id, number);
   const title = stage ? stage.title : '준비 중이에요';
 
+  // 별점 칸은 깬 스테이지에만 그린다. 빈 칸을 남기면 휴대폰에서 그 칸만큼 아래 여백이 더 생긴다.
   return (
     <li>
       <Card className={styles.row}>
@@ -30,11 +32,11 @@ function StageRow({ chapter, number, progress }) {
           </h2>
           {unlocked ? null : <p className="text-quiet">앞 스테이지를 깨면 열려요.</p>}
         </div>
-        <div className={styles.side}>
-          {isStageCleared(progress, chapter.id, number) ? (
+        {cleared ? (
+          <div className={styles.side}>
             <StarRating stars={getStageStars(progress, chapter.id, number)} />
-          ) : null}
-        </div>
+          </div>
+        ) : null}
       </Card>
     </li>
   );

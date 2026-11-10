@@ -10,7 +10,8 @@ function Button({ variant = 'secondary', to, className = '', children, ...rest }
   // 그대로 넣으면 class에 'undefined'라는 글자가 들어간다.
   const variantClass = styles[variant] || '';
   const classNames = `${styles.button} ${variantClass} ${className}`;
-  if (to) {
+  // 링크(a)에는 disabled가 없어서 그대로 넘기면 눌린다. disabled면 누를 수 없는 버튼으로 그린다.
+  if (to && !rest.disabled) {
     return (
       <Link className={classNames} to={to} {...rest}>
         {children}
