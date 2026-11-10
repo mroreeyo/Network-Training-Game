@@ -42,8 +42,14 @@ function useStageAttempt(onCleared) {
     setOutcome({ result, stars });
   }
 
-  // 다시 하기: 결과 창을 닫고 게임판을 처음 상태로 되돌린다. 힌트와 반송 횟수는 그대로 둔다.
+  // 다시 하기: 결과 창을 닫고 게임판을 처음 상태로 되돌린다.
+  // 반송된 뒤에는 힌트와 반송 횟수를 그대로 둔다. 깰 때까지의 반송을 세기 때문이다 (계획서 D5).
+  // 통과한 뒤에는 새 도전이라서 둘 다 0으로 되돌린다. 그대로 두면 다시 깨도 별점을 올릴 수 없다.
   function handleRetry() {
+    if (outcome && outcome.result.passed) {
+      setHintsUsed(0);
+      setMistakeCount(0);
+    }
     setOutcome(null);
     setBoardKey(boardKey + 1);
   }
