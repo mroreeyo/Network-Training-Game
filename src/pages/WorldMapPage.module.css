@@ -1,0 +1,164 @@
+.header {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.map {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: auto var(--size-touch) auto;
+  margin-top: var(--space-12);
+}
+
+/* 장소마다 [위 칸 / 벨트 / 아래 칸] 세 줄을 쓰고, 줄 높이는 네 장소가 똑같이 맞춘다. */
+.station {
+  display: grid;
+  grid-row: 1 / span 3;
+  grid-template-rows: subgrid;
+}
+
+/* 이 장소에서 다음 장소까지 이어지는 벨트 조각이다. 네 조각이 이어져 컨베이어 한 줄이 된다. */
+.segment {
+  grid-row: 2;
+  grid-column: 1;
+  align-self: center;
+  height: var(--space-6);
+  border-top: var(--border-ink);
+  border-bottom: var(--border-ink);
+  background: var(--color-label);
+}
+
+.cleared .segment {
+  background: var(--color-belt);
+}
+
+.station:last-child .segment {
+  display: none;
+}
+
+.node {
+  display: flex;
+  grid-row: 2;
+  grid-column: 1;
+  align-items: center;
+  justify-content: center;
+  justify-self: start;
+  width: var(--size-touch);
+  height: var(--size-touch);
+  border: var(--border-ink);
+  border-radius: var(--radius-label);
+  background: var(--color-label);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-title);
+}
+
+.cleared .node {
+  background: var(--color-belt);
+  color: var(--color-label);
+}
+
+.current .node {
+  background: var(--color-tape);
+}
+
+.locked .node {
+  border: var(--line) dashed var(--color-ink-quiet);
+  background: var(--color-floor);
+  color: var(--color-ink-quiet);
+}
+
+.sign {
+  position: relative;
+  display: grid;
+  grid-column: 1;
+  gap: var(--space-3);
+  margin-right: var(--space-6);
+}
+
+.above .sign {
+  grid-row: 1;
+  align-self: end;
+  margin-bottom: var(--space-4);
+}
+
+.below .sign {
+  grid-row: 3;
+  align-self: start;
+  margin-top: var(--space-4);
+}
+
+/* 장소 표지판과 벨트를 잇는 기둥이다. */
+.sign::after {
+  content: '';
+  position: absolute;
+  left: calc(var(--space-6) - var(--line) * 1.5);
+  width: var(--line);
+  height: calc(var(--space-4) + var(--line));
+  background: var(--color-ink);
+}
+
+.above .sign::after {
+  top: 100%;
+}
+
+.below .sign::after {
+  bottom: 100%;
+}
+
+.locked .sign {
+  border: var(--line) dashed var(--color-ink-quiet);
+  background: transparent;
+}
+
+.locked .sign::after {
+  background: var(--color-ink-quiet);
+}
+
+/* 휴대폰에서는 컨베이어가 위에서 아래로 흐른다. */
+@media (max-width: 860px) {
+  .map {
+    display: block;
+    margin-top: var(--space-8);
+  }
+
+  .station {
+    grid-template-columns: var(--size-touch) 1fr;
+    grid-template-rows: auto;
+    column-gap: var(--space-4);
+  }
+
+  .segment {
+    grid-row: 1;
+    align-self: stretch;
+    justify-self: center;
+    width: var(--space-6);
+    height: auto;
+    border-top: 0;
+    border-right: var(--border-ink);
+    border-bottom: 0;
+    border-left: var(--border-ink);
+  }
+
+  .node {
+    grid-row: 1;
+    align-self: start;
+  }
+
+  .above .sign,
+  .below .sign {
+    grid-row: 1;
+    grid-column: 2;
+    align-self: start;
+    margin: 0 0 var(--space-6) 0;
+  }
+
+  .above .sign::after,
+  .below .sign::after {
+    top: calc(var(--space-6) - var(--line) * 1.5);
+    right: 100%;
+    bottom: auto;
+    left: auto;
+    width: calc(var(--space-4) + var(--line));
+    height: var(--line);
+  }
+}
