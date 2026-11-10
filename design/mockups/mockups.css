@@ -1,15 +1,8 @@
 /* design/mockups/mockups.css
    시안 3장(월드맵, 챕터 1 스테이지, 결과 화면)이 함께 쓰는 스타일이다.
-   색·글꼴·간격은 tokens.css 값만 쓴다. 숫자 px 값은 화면 폭 조건(@media)에만 있다. */
+   색·글꼴·간격은 tokens.css 값만 쓴다. 숫자 px 값은 화면 폭 조건(@media)에만 있다.
+   선 굵기(--line) 같은 계산한 값도 tokens.css에 있다. */
 @import url('../../src/styles/tokens.css');
-
-:root {
-  /* 토큰에서 계산한 값이다. 공통 틀을 만들 때 tokens.css로 옮길지 정한다. */
-  --line: calc(var(--space-1) / 2);          /* 2px: 선 굵기, 버튼이 눌리는 깊이 */
-  --size-touch: var(--space-12);             /* 48px: 누르는 영역 (접근성 기준 44px 이상) */
-  --width-page: calc(var(--space-12) * 24);  /* 1152px: 화면 최대 폭 */
-  --width-text: 40em;                        /* 본문 한 줄은 한글 40자 이내 */
-}
 
 /* ---------- 기본 ---------- */
 
