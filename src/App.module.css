@@ -1,0 +1,17 @@
+.samples {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-4);
+}
+
+.samples > * {
+  max-width: 100%;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin: var(--space-3) 0;
+}

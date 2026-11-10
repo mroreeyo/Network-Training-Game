@@ -1,0 +1,21 @@
+.belt {
+  display: flex;
+  height: var(--space-4);
+  border: var(--border-ink);
+  border-radius: var(--radius-label);
+  background: var(--color-label);
+  overflow: hidden;
+}
+
+.cell {
+  flex: 1;
+  border-right: var(--border-ink);
+}
+
+.cell:last-child {
+  border-right: 0;
+}
+
+.done {
+  background: var(--color-belt);
+}

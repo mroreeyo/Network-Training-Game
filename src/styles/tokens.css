@@ -44,6 +44,8 @@
   --size-touch: var(--space-12);             /* 48px: 누르는 영역 (접근성 기준 44px 이상) */
   --width-page: calc(var(--space-12) * 24);  /* 1152px: 화면 최대 폭 */
   --width-text: 40em;                        /* 본문 한 줄은 한글 40자 이내 */
+  /* 모달 뒤를 덮는 색. 새 색을 만들지 않고 잉크색과 바닥색을 섞는다. */
+  --color-scrim: color-mix(in srgb, var(--color-ink) 60%, var(--color-floor));
 
   /* 움직임 */
   --motion-fast: 120ms;   /* 누르기, 놓기 */
