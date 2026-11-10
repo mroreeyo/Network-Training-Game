@@ -8,6 +8,7 @@ PRD의 개발 규칙 3개(쉬운 코드, 공통 컴포넌트 공유, 라이브�
   - 테스트: `npm run test`
   - 빌드: `npm run build`
   - 린트: `npm run lint`
+  - 규칙 검사: `npm run check:tokens`, `npm run check:imports` (`npm run check`가 위 다섯 가지를 한 번에 실행)
 - `package.json`이 아직 없거나 해당 스크립트가 없으면 건너뛰고, 건너뛴 사실과 이유를 적을 것
 - PR을 열기 전에 `/code-review --fix`와 `/security-review`를 실행하고,
   해결하지 못한 지적 사항은 PR 본문에 적을 것
