@@ -15,14 +15,26 @@ import {
 import { useProgress } from '../ProgressContext.jsx';
 import styles from './StageListPage.module.css';
 
-// 스테이지 화면으로 가는 '시작하기' 버튼은 챕터 1 게임판을 만들 때 추가한다.
+// 열려 있고 스테이지 데이터가 있을 때만 '시작하기' 버튼을 보여 준다.
+// 깬 스테이지에는 별점을 함께 보여 준다. 둘 다 없으면 빈 칸을 그리지 않는다 (휴대폰에서 아래 여백이 더 생긴다).
+function StageRowSide({ chapter, number, progress, playable }) {
+  const cleared = isStageCleared(progress, chapter.id, number);
+  if (!cleared && !playable) {
+    return null;
+  }
+  return (
+    <div className={styles.side}>
+      {cleared ? <StarRating stars={getStageStars(progress, chapter.id, number)} /> : null}
+      {playable ? <Button to={`/chapters/${chapter.id}/stages/${number}`}>{cleared ? '다시 하기' : '시작하기'}</Button> : null}
+    </div>
+  );
+}
+
 function StageRow({ chapter, number, progress }) {
   const stage = chapter.stages[number - 1];
   const unlocked = isStageUnlocked(progress, chapter.id, number);
-  const cleared = isStageCleared(progress, chapter.id, number);
   const title = stage ? stage.title : '준비 중이에요';
 
-  // 별점 칸은 깬 스테이지에만 그린다. 빈 칸을 남기면 휴대폰에서 그 칸만큼 아래 여백이 더 생긴다.
   return (
     <li>
       <Card className={styles.row}>
@@ -32,11 +44,7 @@ function StageRow({ chapter, number, progress }) {
           </h2>
           {unlocked ? null : <p className="text-quiet">앞 스테이지를 깨면 열려요.</p>}
         </div>
-        {cleared ? (
-          <div className={styles.side}>
-            <StarRating stars={getStageStars(progress, chapter.id, number)} />
-          </div>
-        ) : null}
+        <StageRowSide chapter={chapter} number={number} progress={progress} playable={unlocked && stage !== undefined} />
       </Card>
     </li>
   );

@@ -4,6 +4,9 @@ import Button from './Button.jsx';
 import Card from './Card.jsx';
 import styles from './StageHeader.module.css';
 
+// 다시 하기 뒤에 포커스를 옮길 자리(스테이지 제목)의 id다. tabIndex -1은 코드로만 포커스를 줄 수 있게 한다.
+export const STAGE_TITLE_ID = 'stage-title';
+
 // 작업 지시서: 스테이지 제목, 목표, 지금까지의 반송 횟수를 보여 준다.
 // 휴대폰에서는 제목 한 줄만 보여 주고 목표·힌트는 접어 둬서 게임판이 화면에 먼저 보이게 한다
 // (0단계 검수 기록 결정 A). 넓은 화면에서는 항상 펼쳐져 있다.
@@ -13,7 +16,7 @@ function StageHeader({ stage, mistakeCount, children }) {
 
   return (
     <Card className={styles.order}>
-      <h1 className="title-section">
+      <h1 id={STAGE_TITLE_ID} tabIndex={-1} className="title-section">
         스테이지 {stage.number}. {stage.title}
       </h1>
       <Button variant="quiet" className={styles.toggle} aria-expanded={open} onClick={() => setOpen(!open)}>

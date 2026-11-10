@@ -1,9 +1,11 @@
-// [라이브러리] react: 힌트·반송 횟수·결과 상태(useState)를 만든다 (자세한 이유는 main.jsx)
-import { useState } from 'react';
+// [라이브러리] react: 힌트·반송 횟수·결과 상태(useState)를 만들고, 다시 하기 뒤에 포커스를 옮긴다(useEffect) (자세한 이유는 main.jsx)
+import { useEffect, useState } from 'react';
 // [라이브러리] react-router-dom: 주소에서 챕터 id와 스테이지 번호를 읽고 다른 화면으로 보낸다 (자세한 이유는 App.jsx)
 import { Navigate, useParams } from 'react-router-dom';
+import PacketBoard from '../chapters/packet/PacketBoard.jsx';
 import Button from '../components/common/Button.jsx';
 import ResultModal from '../components/common/ResultModal.jsx';
+import { STAGE_TITLE_ID } from '../components/common/StageHeader.jsx';
 import StageLayout from '../components/common/StageLayout.jsx';
 import { chapters, findChapter } from '../data/chapters.js';
 import { findConceptCard } from '../data/conceptCards.js';
@@ -17,7 +19,9 @@ import { useProgress } from '../ProgressContext.jsx';
 
 // 챕터를 추가할 때는 게임판 하나만 여기에 등록한다. 별점·저장·결과 화면은 공통이다.
 // 모든 게임판은 같은 props(stage, onFinish)를 받는다 (계획서 3.5절).
-const chapterBoards = {};
+const chapterBoards = {
+  packet: PacketBoard,
+};
 
 // 커스텀 훅을 쓰는 이유: 힌트·반송 횟수·결과 상태와 그 처리 함수가 길어서,
 // 화면 코드(StageSession)와 분리해야 함수 하나를 30줄 안에서 읽을 수 있다.
@@ -61,6 +65,17 @@ function useStageAttempt(onCleared) {
   return { hintsUsed, mistakeCount, outcome, boardKey, handleFinish, handleRetry, handleUseHint };
 }
 
+// 다시 하기를 누르면 게임판이 새로 만들어져서 키보드 포커스가 화면 맨 앞으로 빠진다.
+// 스테이지 제목으로 옮겨서, Tab을 누르면 바로 게임판 쪽으로 이어지게 한다.
+// boardKey는 다시 하기를 누를 때마다 1씩 늘어난다. 처음 들어왔을 때(0)는 포커스를 옮기지 않는다.
+function useFocusTitleAfterRetry(boardKey) {
+  useEffect(() => {
+    if (boardKey > 0) {
+      document.getElementById(STAGE_TITLE_ID).focus();
+    }
+  }, [boardKey]);
+}
+
 // 한 번의 스테이지 도전. 공통 틀(StageLayout)에 게임판(Board)을 끼우고 결과 화면을 붙인다.
 // onCleared(stars)는 스테이지를 깼을 때 불리며, 진행도 저장은 부르는 쪽이 맡는다.
 export function StageSession({ chapter, stage, Board, conceptCard, onCleared }) {
@@ -68,6 +83,7 @@ export function StageSession({ chapter, stage, Board, conceptCard, onCleared }) 
   const attempt = useStageAttempt(onCleared);
   const { outcome } = attempt;
   const hasNext = chapter.stages[stage.number] !== undefined;
+  useFocusTitleAfterRetry(attempt.boardKey);
 
   return (
     <StageLayout

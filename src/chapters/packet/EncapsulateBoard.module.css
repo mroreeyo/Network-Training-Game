@@ -1,0 +1,22 @@
+.packing {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-4);
+  text-align: center;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+}
+
+/* 휴대폰에서는 패킷 상자를 경로 표보다 먼저 보여 준다. 카드를 붙이는 자리가 첫 화면에 보여야
+   카드를 고를 때마다 화면을 내리지 않아도 된다 (화면 검수: 가장 먼저 보이는 것이 게임판). */
+@media (max-width: 860px) {
+  .packing {
+    order: -1;
+  }
+}

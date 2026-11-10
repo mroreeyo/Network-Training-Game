@@ -2,6 +2,7 @@
 // stages에는 챕터별 스테이지 데이터가 들어간다. 아직 만들지 않은 챕터는 빈 목록이다.
 // stageCount를 따로 두는 이유: 스테이지 데이터가 없어도 해금 규칙과 진행률 칸 수는
 // PRD가 정한 챕터당 5개를 기준으로 계산해야 하기 때문이다.
+import { packetStages } from './packetStages.js';
 
 export const chapters = [
   {
@@ -11,7 +12,7 @@ export const chapters = [
     place: '집하장',
     summary: '데이터에 헤더를 L4, L3, L2 순서로 붙여 목적지까지 보내요.',
     stageCount: 5,
-    stages: [],
+    stages: packetStages,
   },
   {
     id: 'subnet',
