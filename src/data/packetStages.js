@@ -248,13 +248,15 @@ const twoRouterDelivery = {
 // ---------- 스테이지 5: 받는 쪽 (역캡슐화) ----------
 // 스테이지 2에서 서버 B로 보낸 상자가 도착한 모습이다. 마지막 구간의 L2 헤더가 붙어 있다.
 // 목록은 붙인 순서(L4가 맨 안쪽)로 적는다. 화면은 바깥(L2)이 위에 보이게 뒤집어 쌓는다.
+// 주소를 스테이지 2 배송에서 가져오는 이유: 스테이지 2의 주소를 고쳐도 도착한 상자가 함께 바뀌게 하려는 것이다.
+const lastSegmentToServerB = oneRouterDelivery.segments[oneRouterDelivery.segments.length - 1];
 const arrivedAtServerB = {
-  destinationName: '서버 B',
-  payload: '파일 조각',
+  destinationName: SERVER_B.name,
+  payload: oneRouterDelivery.payload,
   labels: [
-    makeTransportCard('arrived-l4', 'TCP', 443),
-    makeIpCard('arrived-l3', '192.168.0.10', '10.0.0.20'),
-    makeEthernetCard('arrived-l2', '11:11:11:00:00:02', 'BB:BB:BB:00:00:0B'),
+    makeTransportCard('arrived-l4', oneRouterDelivery.transport.protocol, oneRouterDelivery.transport.destinationPort),
+    makeIpCard('arrived-l3', oneRouterDelivery.sourceIp, oneRouterDelivery.destinationIp),
+    makeEthernetCard('arrived-l2', lastSegmentToServerB.sourceMac, lastSegmentToServerB.destinationMac),
   ],
 };
 
