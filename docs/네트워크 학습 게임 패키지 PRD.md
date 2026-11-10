@@ -247,6 +247,12 @@ import { DndContext } from '@dnd-kit/core';
   --radius-panel: 8px;  /* 모달, 큰 영역 */
   --border-ink: 2px solid var(--color-ink);
 
+  /* 토큰에서 계산한 값 (0단계 검수 기록 결정 C) */
+  --line: calc(var(--space-1) / 2);          /* 2px: 선 굵기, 버튼이 눌리는 깊이 */
+  --size-touch: var(--space-12);             /* 48px: 누르는 영역 (접근성 기준 44px 이상) */
+  --width-page: calc(var(--space-12) * 24);  /* 1152px: 화면 최대 폭 */
+  --width-text: 40em;                        /* 본문 한 줄은 한글 40자 이내 */
+
   /* 움직임 */
   --motion-fast: 120ms;   /* 누르기, 놓기 */
   --motion-stamp: 240ms;  /* 결과 도장 */
