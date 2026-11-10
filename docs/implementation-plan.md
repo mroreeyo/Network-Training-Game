@@ -115,6 +115,7 @@ StageLayout
 2. `DraggableCard`를 누르거나 Enter/Space를 누르면 그 카드가 선택됩니다.
 3. `DropZone`을 누르거나 그 위에서 Enter/Space를 누르면, 선택된 카드를 놓습니다.
 4. 드래그로 놓아도 3번과 같은 `placeCard(cardId, zoneId)` 함수를 부릅니다.
+5. 터치로 카드를 길게 눌렀다가 움직이지 않고 떼면 드래그가 시작되어 클릭이 오지 않습니다. `DragDropArea`가 이 경우를 누른 것으로 보고 `onSelectCard(cardId)`를 부릅니다.
 
 ### 3.7 모달은 브라우저 기본 `<dialog>`
 

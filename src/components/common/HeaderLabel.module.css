@@ -11,12 +11,16 @@
   font: inherit;
   text-align: left;
   overflow: hidden;
+}
+
+/* 누를 수 있는 라벨(button)에만 준다. 보여 주기만 하는 라벨은 눌리는 것처럼 보이면 안 된다. */
+.pressable {
   cursor: pointer;
-  /* 터치 화면에서 카드를 끌 때 화면이 같이 스크롤되지 않게 한다. */
+  /* 두 번 눌러 확대하기를 꺼서 누르기가 바로 반응하게 한다 (dnd-kit이 터치 드래그에 권장하는 값). */
   touch-action: manipulation;
 }
 
-.label:active {
+.pressable:active {
   transform: translateY(var(--line));
 }
 
@@ -84,8 +88,14 @@
     padding: var(--space-1) var(--space-3);
   }
 
-  /* 부품 트레이 제목이 계층을 알려 주므로 좁은 화면의 트레이 카드는 이름을 숨긴다. */
+  /* 부품 트레이 제목이 계층을 알려 주므로 좁은 화면의 트레이 카드는 이름을 숨긴다.
+     display: none으로 지우면 스크린 리더도 카드 이름을 읽지 못해서, 눈에만 보이지 않게 한다. */
   .compact .name {
-    display: none;
+    position: absolute;
+    width: var(--line);
+    height: var(--line);
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 }

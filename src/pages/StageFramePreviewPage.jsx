@@ -108,7 +108,7 @@ function PreviewBoard({ onFinish }) {
   }
 
   return (
-    <DragDropArea onDropCard={placeCard}>
+    <DragDropArea onDropCard={placeCard} onSelectCard={setSelectedId}>
       <Workbench>
         <SampleBox attached={attached} selectedId={selectedId} onPlace={placeCard} />
         <Button variant="primary" onClick={() => onFinish(passResult)}>

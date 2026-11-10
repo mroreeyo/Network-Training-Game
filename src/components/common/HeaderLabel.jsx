@@ -7,11 +7,17 @@ import styles from './HeaderLabel.module.css';
 function HeaderLabel({ as: Tag = 'div', layer, name, rows, selected = false, compact = false, className = '', ...rest }) {
   const selectedClass = selected ? styles.selected : '';
   const compactClass = compact ? styles.compact : '';
-  const buttonProps = Tag === 'button' ? { type: 'button', 'aria-pressed': selected } : {};
+  const isButton = Tag === 'button';
+  // 보여 주기만 하는 라벨(div)은 누를 수 있는 것처럼 보이면 안 되므로, 손가락 커서와 눌림 표시는 버튼에만 준다.
+  const pressableClass = isButton ? styles.pressable : '';
+  const buttonProps = isButton ? { type: 'button', 'aria-pressed': selected } : {};
+  // CSS에 없는 계층 값은 빈 글자로 둔다. 그대로 넣으면 class에 'undefined'라는 글자가 들어간다.
+  const layerClass = styles[`layer${layer}`] || '';
+  const classNames = `${styles.label} ${pressableClass} ${selectedClass} ${compactClass} ${className}`;
 
   return (
-    <Tag {...rest} className={`${styles.label} ${selectedClass} ${compactClass} ${className}`} {...buttonProps}>
-      <span className={`${styles.layer} ${styles[`layer${layer}`]}`}>
+    <Tag {...rest} className={classNames} {...buttonProps}>
+      <span className={`${styles.layer} ${layerClass}`}>
         {layer}
         {selected ? <span className={styles.picked}>선택</span> : null}
       </span>
