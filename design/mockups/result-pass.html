@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>시안 3-2. 결과 화면: 통과 (검수대)</title>
+  <!-- Pretendard: 계획서 D1 결정에 따라 CDN 동적 서브셋을 버전 고정으로 불러온다. -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="mockups.css">
+</head>
+<body>
+  <!-- 시안 상태: 챕터 1 스테이지 2를 한 번 반송된 뒤에 힌트 없이 깬 경우 (검수 스티커 2개).
+       실제 화면에서는 스테이지 화면 위에 <dialog>로 뜬다. -->
+  <div class="scrim">
+    <section class="inspection" role="dialog" aria-modal="true" aria-labelledby="result-title">
+      <p class="stamp stamp--pass">통과</p>
+
+      <div class="inspection__reason">
+        <h1 class="title-section" id="result-title">배송 완료.</h1>
+        <p class="text-body">라우터에서 L2 헤더만 구간 2의 MAC 주소로 새로 붙였어요. IP 헤더와 TCP 헤더는 그대로 뒀어요.</p>
+      </div>
+
+      <div class="inspection__rating">
+        <div class="stickers" role="img" aria-label="검수 스티커 3개 중 2개">
+          <span class="sticker sticker--earned">검수</span>
+          <span class="sticker sticker--earned">검수</span>
+          <span class="sticker"></span>
+        </div>
+        <p>검수 스티커 2개. 한 번 반송돼서 1개가 빠졌어요.</p>
+      </div>
+
+      <article class="concept-card card">
+        <h2 class="text-label">개념 카드: MAC은 구간마다, IP는 끝까지</h2>
+        <ul class="concept-card__lines">
+          <li>MAC 주소는 바로 옆 장비까지만 쓰여서, 라우터를 지날 때마다 L2 헤더를 새로 붙여요.</li>
+          <li>IP 주소는 처음 출발지와 마지막 목적지를 가리켜서, 가는 동안 바뀌지 않아요.</li>
+          <li>라우터는 L2 헤더를 벗기고 L3의 목적지 IP를 보고 다음 구간을 정해요.</li>
+        </ul>
+      </article>
+
+      <div class="inspection__actions">
+        <button class="button button--primary" type="button">다음 스테이지</button>
+        <button class="button" type="button">다시 하기</button>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

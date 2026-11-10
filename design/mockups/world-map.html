@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>시안 1. 월드맵 (센터 안내도)</title>
+  <!-- Pretendard: 계획서 D1 결정에 따라 CDN 동적 서브셋을 버전 고정으로 불러온다. -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="mockups.css">
+</head>
+<body>
+  <!-- 시안 상태: 챕터 1 완료, 챕터 2 진행 중(2/5), 챕터 3·4 닫힘 -->
+  <main class="page">
+    <header class="map-header">
+      <div class="map-header__text">
+        <h1 class="title-screen">네트워크 물류 센터 안내도</h1>
+        <p class="text-body">챕터를 골라 시작해요. 앞 챕터의 스테이지 5개를 모두 깨면 다음 챕터가 열려요.</p>
+      </div>
+      <a class="button" href="#">개념 도감 보기</a>
+    </header>
+
+    <ol class="belt-map">
+      <li class="station station--above station--cleared">
+        <span class="station__segment"></span>
+        <span class="station__node" aria-hidden="true">1</span>
+        <article class="station__card card">
+          <h2 class="title-section"><span class="screen-reader-only">챕터 1. </span>패킷 택배</h2>
+          <p>챕터 1. 집하장에서 캡슐화를 익혀요.</p>
+          <div class="progress-belt" role="img" aria-label="스테이지 5개 중 5개 완료">
+            <span class="progress-belt__cell progress-belt__cell--done"></span>
+            <span class="progress-belt__cell progress-belt__cell--done"></span>
+            <span class="progress-belt__cell progress-belt__cell--done"></span>
+            <span class="progress-belt__cell progress-belt__cell--done"></span>
+            <span class="progress-belt__cell progress-belt__cell--done"></span>
+          </div>
+          <p class="text-quiet numeric">스테이지 5개 모두 완료, 검수 스티커 13개</p>
+          <a class="button" href="stage-packet.html">스테이지 고르기</a>
+        </article>
+      </li>
+
+      <li class="station station--below station--current">
+        <span class="station__segment"></span>
+        <span class="station__node" aria-hidden="true">2</span>
+        <article class="station__card card">
+          <h2 class="title-section"><span class="screen-reader-only">챕터 2. </span>서브넷 퍼즐</h2>
+          <p>챕터 2. 주소 구획실에서 IP 주소 범위를 나눠요.</p>
+          <div class="progress-belt" role="img" aria-label="스테이지 5개 중 2개 완료">
+            <span class="progress-belt__cell progress-belt__cell--done"></span>
+            <span class="progress-belt__cell progress-belt__cell--done"></span>
+            <span class="progress-belt__cell"></span>
+            <span class="progress-belt__cell"></span>
+            <span class="progress-belt__cell"></span>
+          </div>
+          <p class="text-quiet numeric">스테이지 5개 중 2개 완료, 검수 스티커 5개</p>
+          <a class="button button--primary" href="#">스테이지 3 시작하기</a>
+        </article>
+      </li>
+
+      <li class="station station--above station--locked">
+        <span class="station__segment"></span>
+        <span class="station__node" aria-hidden="true">3</span>
+        <article class="station__card card">
+          <h2 class="title-section"><span class="screen-reader-only">챕터 3. </span>방화벽 디펜스</h2>
+          <p>챕터 3. 검문소에서 포트와 룰 순서를 다뤄요.</p>
+          <p class="text-quiet">아직 닫혀 있어요. 챕터 2의 스테이지 5개를 모두 깨면 열려요.</p>
+        </article>
+      </li>
+
+      <li class="station station--below station--locked">
+        <span class="station__segment"></span>
+        <span class="station__node" aria-hidden="true">4</span>
+        <article class="station__card card">
+          <h2 class="title-section"><span class="screen-reader-only">챕터 4. </span>장애 탐정</h2>
+          <p>챕터 4. 사고 조사실에서 계층별로 원인을 찾아요.</p>
+          <p class="text-quiet">아직 닫혀 있어요. 챕터 3의 스테이지 5개를 모두 깨면 열려요.</p>
+        </article>
+      </li>
+    </ol>
+
+    <footer class="map-footer">
+      <button class="button button--quiet" type="button">진행도 초기화</button>
+    </footer>
+  </main>
+</body>
+</html>

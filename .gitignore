@@ -1,0 +1,13 @@
+# 의존성과 빌드 결과
+node_modules/
+dist/
+
+# 도구가 만드는 로컬 상태
+.omc/
+
+# 환경 변수
+.env
+.env.local
+
+# GitHub 저장소를 잘못된 위치에 받아 생긴 빈 폴더(커밋 없음)
+Network-Training-Game/

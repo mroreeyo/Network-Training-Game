@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>시안 2. 챕터 1 스테이지 (집하장)</title>
+  <!-- Pretendard: 계획서 D1 결정에 따라 CDN 동적 서브셋을 버전 고정으로 불러온다. -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="mockups.css">
+</head>
+<body>
+  <!-- 시안 상태: 챕터 1 스테이지 2. 상자가 라우터 R1에 도착해서 이전 구간의 L2 라벨이 떼어졌고,
+       플레이어가 부품 트레이에서 카드 한 장을 골라 둔 상태 -->
+  <main class="page stage">
+    <nav class="stage-bar" aria-label="스테이지 위치">
+      <a class="button" href="world-map.html">스테이지 목록</a>
+      <div class="stage-bar__progress">
+        <span class="text-quiet numeric">챕터 1. 패킷 택배, 스테이지 5개 중 2번째</span>
+        <div class="progress-belt" role="img" aria-label="스테이지 5개 중 1개 완료">
+          <span class="progress-belt__cell progress-belt__cell--done"></span>
+          <span class="progress-belt__cell"></span>
+          <span class="progress-belt__cell"></span>
+          <span class="progress-belt__cell"></span>
+          <span class="progress-belt__cell"></span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- 위 단: 작업 지시서 (StageHeader + HintBox) -->
+    <header class="work-order card">
+      <div class="work-order__text">
+        <h1 class="title-section">스테이지 2. 라우터 1대를 거쳐 보내기</h1>
+        <p class="text-body">PC A의 파일 조각을 서버 B까지 보내요. 라우터를 지날 때마다 L2 헤더를 새로 붙여야 해요.</p>
+      </div>
+      <div class="work-order__side">
+        <p class="text-quiet numeric">반송 0번</p>
+        <button class="button" type="button">힌트 보기 (별점 1개 감소)</button>
+      </div>
+    </header>
+
+    <!-- 가운데 단: 작업대 (챕터 1 게임판) -->
+    <section class="workbench" aria-label="작업대">
+      <ol class="route numeric">
+        <li class="route__stop">
+          <span class="text-label">PC A</span>
+          <dl class="address-list">
+            <dt>IP</dt><dd>192.168.0.10</dd>
+            <dt>MAC</dt><dd>AA:AA:AA:00:00:0A</dd>
+          </dl>
+        </li>
+        <li class="route__link route__link--passed">구간 1 (지나옴)</li>
+        <li class="route__stop route__stop--here">
+          <span class="text-label">라우터 R1</span>
+          <span class="route__here">상자가 여기 있어요</span>
+          <div class="route__ports">
+            <dl class="address-list">
+              <dt>왼쪽 IP</dt><dd>192.168.0.1</dd>
+              <dt>왼쪽 MAC</dt><dd>11:11:11:00:00:01</dd>
+            </dl>
+            <dl class="address-list">
+              <dt>오른쪽 IP</dt><dd>10.0.0.1</dd>
+              <dt>오른쪽 MAC</dt><dd>11:11:11:00:00:02</dd>
+            </dl>
+          </div>
+        </li>
+        <li class="route__link">구간 2</li>
+        <li class="route__stop">
+          <span class="text-label">서버 B</span>
+          <dl class="address-list">
+            <dt>IP</dt><dd>10.0.0.20</dd>
+            <dt>MAC</dt><dd>BB:BB:BB:00:00:0B</dd>
+          </dl>
+        </li>
+      </ol>
+
+      <div class="packing">
+        <div class="packet-box">
+          <h2 class="text-label">패킷 상자</h2>
+          <!-- 안쪽(데이터)부터 적는다. 화면에는 바깥 헤더가 위에 보인다. -->
+          <ol class="packet-box__labels numeric">
+            <li class="data-slip">
+              <span class="text-label">데이터</span>
+              <span>파일 조각</span>
+            </li>
+            <li class="header-label">
+              <span class="header-label__layer header-label__layer--l4">L4</span>
+              <div class="header-label__body">
+                <span class="header-label__title">TCP 헤더</span>
+                <dl class="address-list">
+                  <dt>목적지 포트</dt><dd>443</dd>
+                </dl>
+              </div>
+            </li>
+            <li class="header-label">
+              <span class="header-label__layer header-label__layer--l3">L3</span>
+              <div class="header-label__body">
+                <span class="header-label__title">IP 헤더</span>
+                <dl class="address-list">
+                  <dt>출발지 IP</dt><dd>192.168.0.10</dd>
+                  <dt>목적지 IP</dt><dd>10.0.0.20</dd>
+                </dl>
+              </div>
+            </li>
+            <li>
+              <button class="drop-zone drop-zone--ready" type="button">
+                <span class="text-label">L2 이더넷 헤더 자리</span>
+                <span>구간 1의 라벨을 뗀 자국이에요. 고른 카드를 여기에 붙여요.</span>
+              </button>
+            </li>
+          </ol>
+        </div>
+
+        <button class="button button--primary" type="button" disabled>패킷 보내기</button>
+        <p class="text-quiet">L2 헤더를 붙이면 보낼 수 있어요.</p>
+      </div>
+    </section>
+
+    <!-- 아래 단: 부품 트레이 -->
+    <section class="tray" aria-labelledby="tray-title">
+      <h2 class="text-label" id="tray-title">부품 트레이: L2 이더넷 헤더 3장</h2>
+      <ul class="tray__list numeric">
+        <li>
+          <button class="header-label" type="button" aria-pressed="false">
+            <span class="header-label__layer header-label__layer--l2">L2</span>
+            <span class="header-label__body">
+              <span class="header-label__title"><span class="header-label__name">이더넷 헤더</span></span>
+              <span class="address-list">
+                <span>출발지 MAC</span><span>AA:AA:AA:00:00:0A</span>
+                <span>목적지 MAC</span><span>11:11:11:00:00:01</span>
+              </span>
+            </span>
+          </button>
+        </li>
+        <li>
+          <button class="header-label header-label--selected" type="button" aria-pressed="true">
+            <span class="header-label__layer header-label__layer--l2">L2<span class="header-label__picked">선택</span></span>
+            <span class="header-label__body">
+              <span class="header-label__title"><span class="header-label__name">이더넷 헤더</span></span>
+              <span class="address-list">
+                <span>출발지 MAC</span><span>11:11:11:00:00:02</span>
+                <span>목적지 MAC</span><span>BB:BB:BB:00:00:0B</span>
+              </span>
+            </span>
+          </button>
+        </li>
+        <li>
+          <button class="header-label" type="button" aria-pressed="false">
+            <span class="header-label__layer header-label__layer--l2">L2</span>
+            <span class="header-label__body">
+              <span class="header-label__title"><span class="header-label__name">이더넷 헤더</span></span>
+              <span class="address-list">
+                <span>출발지 MAC</span><span>AA:AA:AA:00:00:0A</span>
+                <span>목적지 MAC</span><span>BB:BB:BB:00:00:0B</span>
+              </span>
+            </span>
+          </button>
+        </li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

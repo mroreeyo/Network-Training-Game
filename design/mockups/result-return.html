@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>시안 3-1. 결과 화면: 반송 (검수대)</title>
+  <!-- Pretendard: 계획서 D1 결정에 따라 CDN 동적 서브셋을 버전 고정으로 불러온다. -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="mockups.css">
+</head>
+<body>
+  <!-- 시안 상태: 챕터 1 스테이지 2에서 구간 1의 L2 헤더를 그대로 붙여 보낸 경우.
+       실제 화면에서는 스테이지 화면 위에 <dialog>로 뜬다. -->
+  <div class="scrim">
+    <section class="inspection" role="dialog" aria-modal="true" aria-labelledby="result-title">
+      <p class="stamp stamp--return">반송</p>
+
+      <!-- 실패 문구는 세 부분이다: 무슨 일이 있었는지, 왜 그런지, 다음에 무엇을 할지 -->
+      <div class="inspection__reason">
+        <h1 class="title-section" id="result-title">패킷이 반송됐어요.</h1>
+        <p class="text-body">라우터를 지났는데 이전 구간의 MAC 주소가 그대로예요.</p>
+        <p class="text-body">L2 헤더를 새로 붙여 보세요.</p>
+      </div>
+
+      <div class="record numeric">
+        <h2 class="text-label">붙인 L2 이더넷 헤더</h2>
+        <dl class="address-list">
+          <dt>출발지 MAC</dt><dd>AA:AA:AA:00:00:0A (PC A)</dd>
+          <dt>목적지 MAC</dt><dd>11:11:11:00:00:01 (라우터 R1 왼쪽)</dd>
+        </dl>
+        <p class="text-quiet">구간 1에서 쓰던 주소예요. 상자는 지금 구간 2로 나가려고 해요.</p>
+      </div>
+
+      <div class="inspection__actions">
+        <button class="button button--primary" type="button">다시 하기</button>
+        <a class="button" href="world-map.html">스테이지 목록</a>
+      </div>
+    </section>
+  </div>
+</body>
+</html>
