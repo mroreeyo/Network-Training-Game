@@ -121,7 +121,7 @@ describe('judgeStep', () => {
   });
   it('포트가 틀리면 붙인 포트는 알려 주고 맞는 포트는 알려 주지 않는다', () => {
     const result = judgeStep(firstStep, [tcpWrongPort, ip], delivery);
-    expect(result.reason.why).toBe('목적지 포트 8080번은 파일 전송이 쓰는 포트가 아니에요.');
+    expect(result.reason.why).toBe('목적지 포트 8080번은 파일 전송에서 쓰는 포트가 아니에요.');
     expect(JSON.stringify(result.reason)).not.toContain('443');
   });
   it('라우터 IP를 목적지로 쓰면 반송', () => {

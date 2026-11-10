@@ -1,0 +1,22 @@
+/* 상자와 버튼은 작업대 가운데에 두지만 글자는 가운데 정렬하지 않는다 (디자인 가이드 정렬 규칙: 본문은 왼쪽 정렬). */
+.packing {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-4);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+}
+
+/* 휴대폰에서는 패킷 상자를 경로 표보다 먼저 보여 준다. 카드를 붙이는 자리가 첫 화면에 보여야
+   카드를 고를 때마다 화면을 내리지 않아도 된다 (화면 검수: 가장 먼저 보이는 것이 게임판). */
+@media (max-width: 860px) {
+  .packing {
+    order: -1;
+  }
+}

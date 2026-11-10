@@ -13,7 +13,6 @@ import {
 // [라이브러리] react: 주소가 바뀐 뒤에 스크롤을 옮기려고 useEffect를 쓴다 (자세한 이유는 main.jsx)
 import { useEffect } from 'react';
 import { ProgressProvider } from './ProgressContext.jsx';
-import StageFramePreviewPage from './pages/StageFramePreviewPage.jsx';
 import StageListPage from './pages/StageListPage.jsx';
 import StagePage from './pages/StagePage.jsx';
 import WorldMapPage from './pages/WorldMapPage.jsx';
@@ -35,7 +34,6 @@ function ScrollToTop() {
 }
 
 // 개념 도감 주소는 그 화면을 만들 때 추가한다.
-// /preview/stage-frame은 스테이지 틀을 확인하는 임시 주소다. 챕터 1 게임판을 만들면 지운다.
 function App() {
   return (
     <ProgressProvider>
@@ -45,7 +43,6 @@ function App() {
           <Route path="/" element={<WorldMapPage />} />
           <Route path="/chapters/:chapterId" element={<StageListPage />} />
           <Route path="/chapters/:chapterId/stages/:stageNumber" element={<StagePage />} />
-          <Route path="/preview/stage-frame" element={<StageFramePreviewPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>

@@ -71,6 +71,12 @@ a {
 }
 
 @media (max-width: 860px) {
+  /* 휴대폰에서는 부품 트레이가 화면 아래에 붙어 있다. 키보드나 화면 낭독기로 버튼에 포커스가 갈 때
+     브라우저가 그 버튼을 트레이 밑으로 스크롤하지 않도록, 아래쪽에 트레이 높이만큼 여유를 둔다. */
+  html {
+    scroll-padding-bottom: calc(var(--space-12) * 5);
+  }
+
   .page {
     padding: var(--space-6) var(--space-4) var(--space-8);
   }
