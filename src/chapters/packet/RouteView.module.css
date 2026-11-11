@@ -15,7 +15,8 @@
   flex: 0 1 auto;
   min-width: min-content;
   gap: var(--space-1);
-  padding: var(--space-3) var(--space-4);
+  /* 좌우 여백을 위아래와 같게(12px) 줄인 이유: 라우터가 2대인 경로가 1152px 폭 안에 여유 있게 들어가게 하려는 것이다. */
+  padding: var(--space-3);
   border: var(--border-ink);
   border-radius: var(--radius-label);
   background: var(--color-label);
@@ -56,15 +57,18 @@
   white-space: nowrap;
 }
 
+/* 구간 이름과 "(지나옴)"을 위아래로 쌓는다. 지나온 구간만 띠가 두 줄 높이가 된다. */
 .link {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   /* 구간 이름이 잘리지 않게 줄어들지는 않고, 남는 폭만 채운다. */
   flex: 1 0 auto;
   min-width: var(--space-12);
-  height: var(--space-6);
-  padding: 0 var(--space-2);
+  min-height: var(--space-6);
+  padding: 0 var(--space-1);
+  line-height: 1.2;
   border-top: var(--border-ink);
   border-bottom: var(--border-ink);
   background: var(--color-label);
@@ -90,8 +94,10 @@
     width: 100%;
   }
 
+  /* 세로로 흐를 때는 폭이 넉넉해서 구간 이름과 "(지나옴)"을 한 줄에 둔다. */
   .link {
     flex: none;
+    flex-direction: row;
     justify-content: flex-start;
     height: var(--space-8);
     margin-left: var(--space-6);
@@ -112,6 +118,10 @@
 
   .passed {
     background: transparent;
+  }
+
+  .passedNote {
+    white-space: pre;
   }
 
   .passed::before {

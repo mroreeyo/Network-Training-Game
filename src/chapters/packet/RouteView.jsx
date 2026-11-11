@@ -30,8 +30,9 @@ function RouteView({ delivery, stopIndex }) {
       const linkClass = `${styles.link} ${passed ? styles.passed : ''}`;
       items.push(
         <li key={segment.label} className={linkClass}>
-          {segment.label}
-          {passed ? ' (지나옴)' : ''}
+          <span>{segment.label}</span>
+          {/* 넓은 화면에서는 "(지나옴)"을 둘째 줄에 둔다. 한 줄로 쓰면 구간 띠가 넓어져서 라우터가 2대인 경로의 끝 장비가 잘린다. */}
+          {passed ? <span className={styles.passedNote}> (지나옴)</span> : null}
         </li>,
       );
     }
