@@ -76,6 +76,12 @@ describe('packetStages 데이터', () => {
       expect(new Set(ids).size).toBe(ids.length);
     });
   });
+  // PC에서 경로 표는 한 줄(1152px)에 그린다. 장비가 5개 이상이면 끝 장비가 잘려서 주소를 볼 수 없다.
+  it('경로 표의 장비는 4개 이하다', () => {
+    allDeliveries.forEach(({ stage, delivery }) => {
+      expect(delivery.stops.length, `스테이지 ${stage.number}`).toBeLessThanOrEqual(4);
+    });
+  });
   it('작업마다 통과하는 카드 조합이 정확히 하나 있다', () => {
     allSteps.forEach(({ stage, delivery, step }) => {
       const passing = listCardChoices(step).filter((cards) => judgeStep(step, cards, delivery).passed);
