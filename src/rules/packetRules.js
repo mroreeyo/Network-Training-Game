@@ -263,10 +263,11 @@ export function stripLinkHeader(labels) {
   return labels.filter((card) => card.layer !== 'L2');
 }
 
+// 화면에는 "L2 헤더를 벗겼어요." 뒤에 이어서 보인다. 벗긴다는 말을 되풀이하지 않고 그 계층이 확인한 것만 적는다.
 const PEEL_NOTES = {
-  L2: '이더넷 헤더의 목적지 MAC이 내 것인지 확인하고 L2 헤더를 벗겨요.',
-  L3: 'IP 헤더의 목적지 IP가 내 것인지 확인하고 L3 헤더를 벗겨요.',
-  L4: '포트 번호로 어떤 프로그램에 줄지 정하고 L4 헤더를 벗겨요.',
+  L2: '목적지 MAC이 내 MAC과 같은지 확인했어요.',
+  L3: '목적지 IP가 내 IP와 같은지 확인했어요.',
+  L4: '목적지 포트 번호를 보고 데이터를 받을 프로그램을 정했어요.',
 };
 
 export function describePeel(layer) {
