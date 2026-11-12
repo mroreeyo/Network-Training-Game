@@ -71,7 +71,7 @@ function WorldMapPage() {
   return (
     <main className="page">
       <header className={styles.header}>
-        <h1 className="title-screen">네트워크 물류 센터 안내도</h1>
+        <h1 className="title-screen">패킷 물류 센터 안내도</h1>
         <p className="text-body">패킷이 지나가는 길을 따라 네 곳을 차례로 들러요.</p>
       </header>
       <ol className={styles.map}>
