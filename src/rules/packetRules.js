@@ -243,8 +243,35 @@ function judgeCard(card, delivery, segmentIndex) {
   return judgeLinkCard(card, delivery, segmentIndex);
 }
 
-// 한 단계(step)에서 붙인 카드를 판정한다. 순서를 먼저 보고, 그다음 카드 값을 하나씩 본다.
+// 라우터에서(두 번째 구간부터) L3·L4 헤더를 새로 붙였는지 확인한다.
+// 라우터는 L2 헤더만 새로 붙인다. "라우터를 지나면 IP도 바뀐다"는 흔한 오해를 따로 알려 주려고
+// 순서 검사보다 먼저 본다. 순서 검사가 먼저면 "L2 헤더가 빠졌어요"라고만 알려 준다.
+function findHeaderRewrittenAtRouter(step, attachedCards) {
+  if (step.segmentIndex === 0) {
+    return undefined;
+  }
+  return attachedCards.find((card) => card.layer !== 'L2');
+}
+
+const ROUTER_REWRITE_FAILURES = {
+  L3: {
+    why: '라우터에서 IP 헤더를 새로 붙였어요. 라우터는 IP 헤더를 바꾸지 않아요.',
+    next: 'IP 헤더는 출발지와 최종 목적지를 끝까지 알려 줘요. 라우터에서는 다음 구간으로 갈 헤더만 새로 붙여 보세요.',
+  },
+  L4: {
+    why: '라우터에서 L4 헤더를 새로 붙였어요. 라우터는 L4 헤더를 보지도 바꾸지도 않아요.',
+    next: 'L4 헤더는 받는 쪽 프로그램을 알려 줘서 끝까지 그대로예요. 라우터에서는 다음 구간으로 갈 헤더만 새로 붙여 보세요.',
+  },
+};
+
+// 한 단계(step)에서 붙인 카드를 판정한다. 라우터에서 바꾸면 안 되는 헤더를 먼저 보고,
+// 그다음 순서, 마지막으로 카드 값을 하나씩 본다.
 export function judgeStep(step, attachedCards, delivery) {
+  const rewritten = findHeaderRewrittenAtRouter(step, attachedCards);
+  if (rewritten !== undefined) {
+    const message = ROUTER_REWRITE_FAILURES[rewritten.layer];
+    return makeFailure(message.why, message.next, rewritten);
+  }
   const orderResult = checkHeaderOrder(attachedCards, step.layers);
   if (!orderResult.passed) {
     return orderResult;

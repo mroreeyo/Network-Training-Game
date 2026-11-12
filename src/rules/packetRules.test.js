@@ -136,6 +136,15 @@ describe('judgeStep', () => {
   it('둘째 구간의 올바른 L2는 통과', () => {
     expect(judgeStep({ layers: ['L2'], segmentIndex: 1 }, [eth2], delivery).passed).toBe(true);
   });
+  it('라우터에서 IP 헤더를 새로 붙이면 IP는 바뀌지 않는다고 알려 준다', () => {
+    const rewrittenIp = { id: 'ip-rewritten', layer: 'L3', values: { sourceIp: '10.0.0.1', destinationIp: '10.0.0.20' } };
+    const result = judgeStep({ layers: ['L2'], segmentIndex: 1 }, [rewrittenIp], delivery);
+    expect(result.reason.why).toBe('라우터에서 IP 헤더를 새로 붙였어요. 라우터는 IP 헤더를 바꾸지 않아요.');
+    expect(result.record.title).toBe('붙인 L3 IP 헤더');
+  });
+  it('첫 구간에서는 IP 헤더를 붙여도 라우터 문구로 반송하지 않는다', () => {
+    expect(judgeStep(firstStep, [tcp, ip], delivery).passed).toBe(true);
+  });
 });
 
 describe('라우터와 역캡슐화', () => {

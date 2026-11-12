@@ -7,13 +7,18 @@ function Stop({ stop, here }) {
       <span className="text-label">{stop.name}</span>
       {here ? <span className={styles.badge}>상자가 여기 있어요</span> : null}
       <div className={styles.ports}>
+        {/* 라우터 포트 이름(들어오는 쪽, 나가는 쪽)은 주소 위에 한 번만 적는다.
+            줄마다 "들어오는 쪽 MAC"처럼 붙이면 칸이 넓어져서 라우터 2대 경로가 한 줄에 들어가지 않는다. */}
         {stop.ports.map((port) => (
-          <dl key={port.mac} className={styles.addresses}>
-            <dt>{port.label ? `${port.label} IP` : 'IP'}</dt>
-            <dd>{port.ip}</dd>
-            <dt>{port.label ? `${port.label} MAC` : 'MAC'}</dt>
-            <dd>{port.mac}</dd>
-          </dl>
+          <div key={port.mac} className={styles.port}>
+            {port.label ? <p className={styles.portLabel}>{port.label}</p> : null}
+            <dl className={styles.addresses}>
+              <dt>IP</dt>
+              <dd>{port.ip}</dd>
+              <dt>MAC</dt>
+              <dd>{port.mac}</dd>
+            </dl>
+          </div>
         ))}
       </div>
     </li>
