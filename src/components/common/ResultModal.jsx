@@ -55,7 +55,7 @@ function ResultBody({ result, stars, conceptCard, notice }) {
 function ResultActions({ passed, next, listPath, onRetry }) {
   return (
     <div className={styles.actions}>
-      {passed ? (
+      {passed && next ? (
         <Button variant="primary" to={next.path}>
           {next.label}
         </Button>
@@ -68,7 +68,8 @@ function ResultActions({ passed, next, listPath, onRetry }) {
   );
 }
 
-// next: 통과한 뒤 갈 곳 { path, label, notice }. notice는 챕터를 다 깼을 때처럼 따로 알릴 말이 있을 때만 있다.
+// next: 통과한 뒤 갈 곳 { path, label, notice }. 갈 곳이 아직 없으면 null이다.
+// notice는 챕터를 다 깼을 때처럼 따로 알릴 말이 있을 때만 있다.
 function ResultModal({ result, stars, conceptCard, onRetry, next, listPath }) {
   const open = result !== null;
   const passed = open && result.passed;
@@ -79,7 +80,7 @@ function ResultModal({ result, stars, conceptCard, onRetry, next, listPath }) {
           <h2 id="result-title" className={`${styles.stamp} ${passed ? styles.pass : styles.return}`}>
             {passed ? '통과' : '반송'}
           </h2>
-          <ResultBody result={result} stars={stars} conceptCard={conceptCard} notice={next.notice} />
+          <ResultBody result={result} stars={stars} conceptCard={conceptCard} notice={next ? next.notice : null} />
           <ResultActions passed={passed} next={next} listPath={listPath} onRetry={onRetry} />
         </div>
       ) : null}

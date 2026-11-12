@@ -80,9 +80,14 @@ function useFocusTitleAfterRetry(boardKey) {
 // 통과한 뒤 결과 창에서 갈 곳. 챕터의 마지막 스테이지면 다음 스테이지 대신 센터 안내도로 보낸다.
 // 다음 챕터가 열렸다는 것을 결과 창에서 바로 알려 준다. 알리지 않으면 안내도에 가 봐야만 알 수 있다.
 // 문구를 "열렸어요" 대신 "들어갈 수 있어요"로 쓰는 이유: 이미 깬 마지막 스테이지를 다시 깰 때도 맞는 말이어야 한다.
+// 다음 스테이지를 아직 만들지 않았으면 null이다. 마지막인지는 데이터 개수가 아니라 stageCount로 본다.
+// 데이터 개수로 보면 스테이지를 만드는 중인 챕터에서 "모두 깼어요"라고 잘못 알린다.
 function findNextAfterPass(chapter, stage) {
   if (chapter.stages[stage.number] !== undefined) {
     return { path: `/chapters/${chapter.id}/stages/${stage.number + 1}`, label: '다음 스테이지', notice: null };
+  }
+  if (stage.number < chapter.stageCount) {
+    return null;
   }
   const nextChapter = chapters.find((item) => item.number === chapter.number + 1);
   const notice = nextChapter
