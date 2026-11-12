@@ -142,6 +142,10 @@ describe('judgeStep', () => {
     expect(result.reason.why).toBe('라우터에서 IP 헤더를 새로 붙였어요. 라우터는 IP 헤더를 바꾸지 않아요.');
     expect(result.record.title).toBe('붙인 L3 IP 헤더');
   });
+  it('라우터에서 L4 헤더를 새로 붙여도 그대로 둬야 한다고 알려 준다', () => {
+    const result = judgeStep({ layers: ['L2'], segmentIndex: 1 }, [tcp], delivery);
+    expect(result.reason.why).toBe('라우터에서 L4 헤더를 새로 붙였어요. 라우터는 L4 헤더를 보지도 바꾸지도 않아요.');
+  });
   it('첫 구간에서는 IP 헤더를 붙여도 라우터 문구로 반송하지 않는다', () => {
     expect(judgeStep(firstStep, [tcp, ip], delivery).passed).toBe(true);
   });
