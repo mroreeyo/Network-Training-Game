@@ -53,14 +53,20 @@
           <span class="text-label">라우터 R1</span>
           <span class="route__here">상자가 여기 있어요</span>
           <div class="route__ports">
-            <dl class="address-list">
-              <dt>왼쪽 IP</dt><dd>192.168.0.1</dd>
-              <dt>왼쪽 MAC</dt><dd>11:11:11:00:00:01</dd>
-            </dl>
-            <dl class="address-list">
-              <dt>오른쪽 IP</dt><dd>10.0.0.1</dd>
-              <dt>오른쪽 MAC</dt><dd>11:11:11:00:00:02</dd>
-            </dl>
+            <div>
+              <p class="text-quiet">들어오는 쪽</p>
+              <dl class="address-list">
+                <dt>IP</dt><dd>192.168.0.1</dd>
+                <dt>MAC</dt><dd>11:11:11:00:00:01</dd>
+              </dl>
+            </div>
+            <div>
+              <p class="text-quiet">나가는 쪽</p>
+              <dl class="address-list">
+                <dt>IP</dt><dd>10.0.0.1</dd>
+                <dt>MAC</dt><dd>11:11:11:00:00:02</dd>
+              </dl>
+            </div>
           </div>
         </li>
         <li class="route__link">구간 2</li>
@@ -103,7 +109,7 @@
             </li>
             <li>
               <button class="drop-zone drop-zone--ready" type="button">
-                <span class="text-label">L2 이더넷 헤더 자리</span>
+                <span class="text-label">다음 헤더 자리</span>
                 <span>구간 1의 라벨을 뗀 자국이에요. 고른 카드를 여기에 붙여요.</span>
               </button>
             </li>

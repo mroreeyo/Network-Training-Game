@@ -82,6 +82,15 @@ describe('packetStages 데이터', () => {
       expect(delivery.stops.length, `스테이지 ${stage.number}`).toBeLessThanOrEqual(4);
     });
   });
+  // 함정 카드: 라우터 작업 트레이에 둔, 이번 작업에서 붙이면 안 되는 계층의 카드(예: IP를 바꾼 L3).
+  it('이번 작업의 계층이 아닌 함정 카드는 붙이면 반송된다', () => {
+    allSteps.forEach(({ stage, delivery, step }) => {
+      const traps = step.tray.filter((card) => !step.layers.includes(card.layer));
+      traps.forEach((card) => {
+        expect(judgeStep(step, [card], delivery).passed, `스테이지 ${stage.number}: ${card.id}`).toBe(false);
+      });
+    });
+  });
   it('작업마다 통과하는 카드 조합이 정확히 하나 있다', () => {
     allSteps.forEach(({ stage, delivery, step }) => {
       const passing = listCardChoices(step).filter((cards) => judgeStep(step, cards, delivery).passed);

@@ -84,7 +84,6 @@ function useEncapsulation(stage, onFinish) {
 
 function BoxArea({ board }) {
   const { step, attached, selectedId, isFull } = board;
-  const zoneName = step.layers.length === 1 ? `${step.layers[0]} 헤더 자리` : '다음 헤더 자리';
   const zoneHint = selectedId ? '고른 카드를 여기에 붙여요.' : '부품 트레이에서 카드를 먼저 골라요.';
   return (
     <div className={styles.packing}>
@@ -94,9 +93,10 @@ function BoxArea({ board }) {
         <p className="text-body">{step.prompt}</p>
       </div>
       <PacketBox payload={board.delivery.payload} labels={[...board.labels, ...attached]}>
+        {/* 자리 이름에 계층(L2 등)을 적지 않는다. 라우터 작업에서 어떤 헤더를 새로 붙일지 스스로 정하게 하려는 것이다. */}
         {isFull ? null : (
           <li>
-            <DropZone id={NEXT_LABEL_ZONE} name={zoneName} hint={zoneHint} ready={selectedId !== null} onActivate={() => board.placeCard(selectedId, NEXT_LABEL_ZONE)} />
+            <DropZone id={NEXT_LABEL_ZONE} name="다음 헤더 자리" hint={zoneHint} ready={selectedId !== null} onActivate={() => board.placeCard(selectedId, NEXT_LABEL_ZONE)} />
           </li>
         )}
       </PacketBox>
